@@ -1,0 +1,3 @@
+[submodule "system/library/trustly-client-php"]
+	path = system/library/trustly-client-php
+	url = https://github.com/trustly/trustly-client-php

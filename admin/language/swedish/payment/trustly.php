@@ -1,0 +1,57 @@
+<?php
+if (!defined('DIR_APPLICATION')) {
+    die();
+}
+
+$_['heading_title'] = 'Trustly';
+$_['text_payment'] = 'Betalsätt';
+$_['text_trustly']   = '<a href="https://trustly.com/" target="_blank"><img src="view/image/payment/trustly.png" alt="Trustly" title="Trustly" style="border: 1px solid #eee;" /></a>';
+$_['text_success'] = 'Trustly inställningarna sparade';
+$_['text_settings'] = 'Inställningar';
+$_['text_backoffice_info'] = 'Du kan överse alla transaktioner och få support i Trustly backoffice';
+$_['text_backoffice_link_live'] = 'Trustly Live backoffice:';
+$_['text_backoffice_link_test'] = 'Trustly Test backoffice:';
+$_['text_orders'] = 'Trustly beställningar';
+$_['text_username'] = 'Användarnamn';
+$_['text_password'] = 'Lösenord';
+$_['text_private_key'] = 'Din privata nyckel';
+$_['text_test_mode'] = 'Använd Trustly test servrar för betalning';
+$_['text_notify_http'] = 'Begär meddelanden över HTTP iställer för HTTPSe';
+$_['text_total'] = 'Totalt:<br /><span class="help">Den totala summan en order måste uppgå i innan betalningsmetoden aktiveras</span>';
+$_['text_complete_status'] = 'Färdigbehandlad status';
+$_['text_pending_status'] = 'Väntande Status';
+$_['text_canceled_status'] = 'Avbruten Status';
+$_['text_failed_status'] = 'Misslyckad Status';
+$_['text_refunded_status'] = 'Återbetald Status';
+$_['text_geo_zone'] = 'Geologisk Zon';
+$_['text_yes'] = 'Ja';
+$_['text_no'] = 'Nej';
+$_['text_status'] = 'Status';
+$_['text_sort_order'] = 'Sorterings ordning';
+$_['text_order_id'] = 'Order Id';
+$_['text_trustly_order_id'] = 'Trustly Order Id';
+$_['text_notification_id'] = 'Notifikations Id';
+$_['text_amount'] = 'Belopp';
+$_['text_date'] = 'Datum';
+$_['text_actions'] = 'Handlingar';
+$_['text_wait'] = 'Var god och vänta...';
+$_['text_refund'] = 'Återbetala';
+$_['text_refunded'] = 'Återbetald';
+$_['text_refund_performed'] = 'Återbetalningsoperationen är utförd. Belopp: %s %s. Datum: %s';
+$_['error_permission'] = 'VARNING: Du har inte tillstånd att ändra betalsättet Trustly!';
+$_['error_php_extension_openssl'] = 'PHP OpenSSL extension is not enabled';
+$_['error_php_extension_curl'] = 'PHP Curl extension is not enabled';
+$_['error_php_extension_bcmath'] = 'PHP BCMath extension is not enabled';
+$_['error_php_extension_mbstring'] = 'PHP mbstring extension is not enabled';
+$_['error_php_extension_json'] = 'PHP json extension is not enabled';
+$_['error_username'] = 'Ogiltigt användarnamn';
+$_['error_password'] = 'Ogiltigt lösenord';
+$_['error_private_key'] = 'Ogiltig privat nyckel';
+$_['error_auth'] = 'API Authentication error, var god och kolla att du har rätt användarnamn/lösenord';
+$_['error_response_code'] = 'API Response code %d (%s)';
+$_['error_response_http'] = 'API Responded with HTTP %d';
+$_['error_cannot_connect'] = 'Kan inte ansluta till Trustlys tjänster: %s';
+$_['error_check_your_firewall'] = 'Var god och kolla din brandvägg och nätverks konfiguration';
+$_['error_cannot_verify'] = 'Kan inte verifiera autenticiteten av Trustly kommunikationen.';
+$_['error_failed_communicate'] = 'Misslyckades att kommunicera med Trustly.';
+$_['error_cannot_access'] = 'Kan inte nå betalsättet: %s';

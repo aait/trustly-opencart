@@ -1,0 +1,20 @@
+<?php
+if (!defined('DIR_APPLICATION')) {
+    die();
+}
+
+$_['text_title'] = 'Betala med Trustly';
+$_['text_message_payment_credited'] = 'En Trustly betalning på %s %s har blivit krediterad till den här ordern på %s, Trustly order-id %s.';
+$_['text_message_order_totals_not_match'] = 'Trustly betalningen för den här ordern på %s i %s %s matchar inte totala ordern på %s %s.';
+$_['text_message_payment_debited'] = 'En Trustly betalning på %s har dragits till den här ordern %s';
+$_['text_message_payment_canceled'] = 'Betalningen avbröts på Trustly av %s';
+$_['text_message_payment_pending'] = 'En Trustly betalning på %s %s har startats för den här ordern på %s, Trustly order-id %s.';
+$_['text_message_payment_pending_notification'] = 'Väntar på notifikation från Trustly. Var god och inspektera ordern senare.';
+$_['text_error_title'] = 'Trustly betalnings fel';
+$_['text_error_description'] = 'Ett fel uppstod under betalningen.';
+$_['text_error_link'] = 'Tillbaka till kassan';
+$_['error_invalid_order'] = 'Ogiltig order';
+$_['error_unknown'] = 'Ett okänt fel uppstod';
+$_['error_no_payment_url'] = 'Ett fel uppstod vid kommunikationen med Trustlys web service: Ingen betalnings urls togs emot.';
+$_['error_payment_failed'] = 'Betalningen misslyckades';
+
