@@ -10,6 +10,10 @@ $_['text_message_payment_debited'] = 'En Trustly betalning på %s har dragits ti
 $_['text_message_payment_canceled'] = 'Betalningen avbröts på Trustly av %s';
 $_['text_message_payment_pending'] = 'En Trustly betalning på %s %s har startats för den här ordern på %s, Trustly order-id %s.';
 $_['text_message_payment_pending_notification'] = 'Väntar på notifikation från Trustly. Var god och inspektera ordern senare.';
+$_['text_order_orders_processed'] = 'Din order är betald!';
+$_['text_order_orders_pending'] = 'Din order är mottagen och kommer behandlas så fort betalningen är konfirmerad.';
+$_['text_success_customer'] = '<p>Du kan se din orderhistorik på <a href="%s">min sida</a> klicka på <a href="%s">historik</a>.</p><p>Om ditt köp har en nedladdningsbar produkt kan du gå till <a href="%s">Nedladdningar</a> för att se dem.</p><p>Om du har några frågor, vänligen kontakta <a href="%s">Kundtjänst</a>.</p><p>Tack för att du handlar hos oss!</p>';
+$_['text_success_guest'] = '<p>Om du har några frågor, vänligen kontakta <a href="%s">Kundtjänst</a>.</p><p>Tack för att du handlar hos oss!</p>';
 $_['text_error_title'] = 'Trustly betalnings fel';
 $_['text_error_description'] = 'Ett fel uppstod under betalningen.';
 $_['text_error_link'] = 'Tillbaka till kassan';
