@@ -318,7 +318,7 @@ class ControllerPaymentTrustly extends Controller
         } catch (Trustly_DataException $e) {
             $this->error[] = $this->language->get('error_failed_communicate');
         } catch (Exception $e) {
-            $this->error[] = sprintf($this->language->get('error_cannot_acces'), $e->getMessage());
+            $this->error[] = sprintf($this->language->get('error_cannot_access'), $e->getMessage());
             $this->error[] = $this->language->get('error_check_your_firewall');
         }
 
