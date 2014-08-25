@@ -50,7 +50,7 @@ class ModelPaymentTrustly extends Model
             $this->db->query("
 				CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "trustly_orders` (
 				  `order_id` int(10) NOT NULL COMMENT 'OpenCart Order Id',
-				  `trustly_order_id` bigint(10) NOT NULL COMMENT 'Trustly Order Id',
+				  `trustly_order_id` varchar(255) NOT NULL COMMENT 'Trustly Order Id',
 				  `url` varchar(255) DEFAULT NULL COMMENT 'Trustly Payment URL',
 				  PRIMARY KEY (`order_id`),
 				  UNIQUE KEY `trustly_order_id` (`trustly_order_id`)
@@ -62,8 +62,8 @@ class ModelPaymentTrustly extends Model
         if ($res->num_rows === 0) {
             $this->db->query("
 				CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "trustly_notifications` (
-				  `notification_id` bigint(10) NOT NULL COMMENT 'Trustly Notification Id',
-				  `trustly_order_id` bigint(10) NOT NULL COMMENT 'Trustly Order Id',
+				  `notification_id` varchar(255) NOT NULL COMMENT 'Trustly Notification Id',
+				  `trustly_order_id` varchar(255) NOT NULL COMMENT 'Trustly Order Id',
 				  `method` varchar(50) DEFAULT NULL COMMENT 'Trustly Notification Method',
 				  `amount` float DEFAULT '0' COMMENT 'Payment amount',
 				  `currency` varchar(50) DEFAULT NULL COMMENT 'Payment currency',
@@ -88,7 +88,7 @@ class ModelPaymentTrustly extends Model
 
         $query = sprintf('INSERT INTO `' . DB_PREFIX . 'trustly_orders` (order_id, trustly_order_id, url) VALUES (%d, %d, "%s");',
             $this->db->escape((int)$order_id),
-            $this->db->escape((int)$trustly_order_id),
+            $this->db->escape($trustly_order_id),
             $this->db->escape($url)
         );
 
@@ -198,8 +198,8 @@ class ModelPaymentTrustly extends Model
         $date = date('Y-m-d H:i:s', strtotime($date));
 
         $query = sprintf('INSERT INTO `' . DB_PREFIX . 'trustly_notifications` (notification_id, trustly_order_id, method, amount, currency, date) VALUES (%d, %d, "%s", %f, "%s", "%s");',
-            $this->db->escape((int)$notification_id),
-            $this->db->escape((int)$trustly_order_id),
+            $this->db->escape($notification_id),
+            $this->db->escape($trustly_order_id),
             $this->db->escape($method),
             $this->db->escape((float)$amount),
             $this->db->escape($currency),

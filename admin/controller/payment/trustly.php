@@ -417,7 +417,7 @@ class ControllerPaymentTrustly extends Controller
             $this->db->query("
 				CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "trustly_orders` (
 				  `order_id` int(10) NOT NULL COMMENT 'OpenCart Order Id',
-				  `trustly_order_id` bigint(10) NOT NULL COMMENT 'Trustly Order Id',
+				  `trustly_order_id` varchar(255) NOT NULL COMMENT 'Trustly Order Id',
 				  `url` varchar(255) DEFAULT NULL COMMENT 'Trustly Payment URL',
 				  PRIMARY KEY (`order_id`),
 				  UNIQUE KEY `trustly_order_id` (`trustly_order_id`)
@@ -429,8 +429,8 @@ class ControllerPaymentTrustly extends Controller
         if ($res->num_rows === 0) {
             $this->db->query("
 				CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "trustly_notifications` (
-				  `notification_id` bigint(10) NOT NULL COMMENT 'Trustly Notification Id',
-				  `trustly_order_id` bigint(10) NOT NULL COMMENT 'Trustly Order Id',
+				  `notification_id` varchar(255) NOT NULL COMMENT 'Trustly Notification Id',
+				  `trustly_order_id` varchar(255) NOT NULL COMMENT 'Trustly Order Id',
 				  `method` varchar(50) DEFAULT NULL COMMENT 'Trustly Notification Method',
 				  `amount` float DEFAULT '0' COMMENT 'Payment amount',
 				  `currency` varchar(50) DEFAULT NULL COMMENT 'Payment currency',
