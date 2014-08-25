@@ -335,6 +335,21 @@ class ControllerPaymentTrustly extends Controller
             exit();
         }
 
+		// Get Order Notifications
+		$notifications = $this->model_payment_trustly->getTrustlyNotifications($trustly_order_id);
+		$methods = array();
+		foreach ($notifications as $item) {
+			// Check Notification is already registered
+			if ($item['notification_id'] === $trustly_notification_id) {
+        		// Show Notification Response
+        		$response = $this->getAPI()->notificationResponse($notification, true);
+        		$response_json = $response->json();
+        		exit($response_json);
+			}
+
+			$methods[] = $item['method'];
+		}
+
         $payment_currency = $notification->getData('currency');
         $payment_amount = $notification->getData('amount');
         $payment_date = date('Y-m-d H:i:s', strtotime($notification->getData('timestamp')));
@@ -346,6 +361,11 @@ class ControllerPaymentTrustly extends Controller
         $this->addLog('Payment amount: ' . $payment_amount . ' ' . $payment_currency);
         switch ($notification_method) {
             case 'pending':
+				if (in_array($notification_method, $methods)) {
+					$this->addLog('Order #' . $order_id . ' already pending.');
+					break;
+				}
+
                 $notification_message = sprintf($this->language->get('text_message_payment_pending'),
                     $payment_amount,
                     $payment_currency,
@@ -375,6 +395,11 @@ class ControllerPaymentTrustly extends Controller
                 $this->addLog('Updated order status for order #' . $order_id);
                 break;
             case 'cancel':
+				if (in_array($notification_method, $methods)) {
+					$this->addLog('Order #' . $order_id . ' already canceled.');
+					break;
+				}
+
                 $notification_message = sprintf($this->config->get('text_message_payment_canceled'),
                     $payment_date
                 );
