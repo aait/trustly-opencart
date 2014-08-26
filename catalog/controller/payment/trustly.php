@@ -365,6 +365,10 @@ class ControllerPaymentTrustly extends Controller
 					$this->addLog('Order #' . $order_id . ' already pending.');
 					break;
 				}
+                if (in_array('credit', $methods)) {
+                    $this->addLog('Order #' . $order_id . ' already credited.');
+                    break;
+                }
 
                 $notification_message = sprintf($this->language->get('text_message_payment_pending'),
                     $payment_amount,
