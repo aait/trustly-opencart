@@ -13,7 +13,7 @@ all: zip
 install:
 	for file in $(FILES); do  \
 		mkdir -p "$(DESTDIR)/$$(dirname $$file)"; \
-		ln -sf "$(ROOT)$$file" "$(DESTDIR)/$$(dirname $$file)"; \
+		ln -sf "$(ROOT)/$$file" "$(DESTDIR)/$$(dirname $$file)"; \
 	done
 
 
