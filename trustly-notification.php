@@ -6,7 +6,7 @@
  * This script should helpful to solve this problem
  */
 
-require_once dirname(__FILE__) . '/config.php';
+require_once dirname($_SERVER['SCRIPT_FILENAME']) . '/config.php';
 
 $http_raw_post_data = $HTTP_RAW_POST_DATA;
 if (empty($http_raw_post_data)) {
