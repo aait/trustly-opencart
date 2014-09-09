@@ -29,18 +29,28 @@ class ControllerPaymentTrustly extends Controller
         $trustly_order = $this->model_payment_trustly->getTrustlyOrder($order_id);
         if (!$trustly_order) {
             // Retrieve Payment Url from Trustly
-            $response = $this->retrievePaymentUrl($order_id);
-            $trustly_order_id = $response->getData('orderid');
-            $url = $response->getData('url');
+			$response = $this->retrievePaymentUrl($order_id);
 
-            // Save Trustly Order Id
-            $this->model_payment_trustly->addTrustlyOrder($order_id, $trustly_order_id, $url);
+			if($response !== FALSE && $response->isSuccess()) {
+				$trustly_order_id = $response->getData('orderid');
+				$url = $response->getData('url');
 
-            $trustly_order = array(
-                'trustly_order_id' => $trustly_order_id,
-                'order_id' => $order_id,
-                'url' => $url
-            );
+				// Save Trustly Order Id
+				$this->model_payment_trustly->addTrustlyOrder($order_id, $trustly_order_id, $url);
+
+				$trustly_order = array(
+					'trustly_order_id' => $trustly_order_id,
+					'order_id' => $order_id,
+					'url' => $url
+				);
+			} else {
+				if($response === FALSE) {	
+					$this->addLog('Failed to create the Trustly order');
+				} else {
+					$this->addLog('Failed to create the Trustly order: ' . $response->getErrorCode() . ' - ' . $response->getErrorMessage());
+					throw new Exception($this->language->get('error_order_create'));
+				}
+			}
         }
 
         // Check Payment URL
@@ -481,33 +491,33 @@ class ControllerPaymentTrustly extends Controller
 
         try {
             $response = $this->getAPI()->deposit(
-                $notification_url,
-                $enduserid,
-                $messageid,
-                $locale,
-                number_format($amount, 2, '.', ''),
-                $currency,
-                $country,
-                $phone,
-                $first_name,
-                $last_name,
-                null,
-                $store_name,
-                $client_ip,
-                $success_url,
-                $failed_url,
-                null,
-                null,
-                null,
-                null,
-                $version_string
+                $notification_url,					//NotificationURL
+                $enduserid,							//EnduserID
+                $messageid,							//MessageID
+                $locale,							//Locale
+                number_format($amount, 2, '.', ''),	//Amount
+                $currency,							//Currency
+                $country,							//Country
+                $phone,								//MobilePhone
+                $first_name,						//Firstname
+                $last_name,							//Lastname
+                null,								//NationalIdentificationNumber
+                $store_name,						//ShopperStatement
+                $client_ip,							//Host
+                $success_url,						//SuccessURL
+                $failed_url,						//FailURL
+                null,								//TemplateURL
+                null,								//URLTarget
+                null,								//SuggestedMinAmount
+                null,								//SuggestedMaxAmount
+                $version_string						//IntegrationModule
             );
 
             return $response;
         } catch (Trustly_ConnectionException $e) {
-            $this->addLog('Error: ' .  $e->getMessage());
+            $this->addLog('Trustly_ConnectionException: ' .  $e->getMessage());
         } catch (Trustly_DataException $e) {
-            $this->addLog('Error: ' .  $e->getMessage());
+            $this->addLog('Trustly_DataException: ' .  $e->getMessage());
         } catch (Exception $e) {
             $this->addLog('Error: ' .  $e->getMessage());
         }

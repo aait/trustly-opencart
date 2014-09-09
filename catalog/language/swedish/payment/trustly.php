@@ -21,4 +21,4 @@ $_['error_invalid_order'] = 'Ogiltig order';
 $_['error_unknown'] = 'Ett okänt fel uppstod';
 $_['error_no_payment_url'] = 'Ett fel uppstod vid kommunikationen med Trustlys web service: Ingen betalnings urls togs emot.';
 $_['error_payment_failed'] = 'Betalningen misslyckades';
-
+$_['error_order_create'] = 'Kunde inte starta betalningen';
