@@ -366,19 +366,17 @@ class ControllerPaymentTrustly extends Controller
         $payment_amount = $notification->getData('amount');
         $payment_date = date('Y-m-d H:i:s', strtotime($notification->getData('timestamp')));
 
-        $this->addLog('Notification Id: ' . $trustly_notification_id);
-        $this->addLog('Notification method: ' . $notification_method);
-        $this->addLog('Order Id: ' . $order_id);
-        $this->addLog('Trustly Order Id: ' . $trustly_order_id);
-        $this->addLog('Payment amount: ' . $payment_amount . ' ' . $payment_currency);
+		$this->addLog(sprintf('Notification Id: %s, Notification method: %s, Order Id: %s, Trustly Order Id: %s, Payment amount: %s %s',
+			$trustly_notification_id, $notification_method, $order_id, $trustly_order_id, $payment_amount, $payment_currency));
+
         switch ($notification_method) {
             case 'pending':
 				if (in_array($notification_method, $methods)) {
-					$this->addLog('Order #' . $order_id . ' already pending.');
+					$this->addLog('Incoming pending notification, but Order #' . $order_id . ' already pending.');
 					break;
 				}
                 if (in_array('credit', $methods)) {
-                    $this->addLog('Order #' . $order_id . ' already credited.');
+                    $this->addLog('Incoming pending notification, but Order #' . $order_id . ' already credited.');
                     break;
                 }
 
@@ -390,7 +388,7 @@ class ControllerPaymentTrustly extends Controller
                 );
                 $this->model_checkout_order->confirm($order_id, $this->config->get('trustly_pending_status_id'), $notification_message, false);
                 $this->sendConfirmationMail($order_id, $notification_message);
-                $this->addLog('Updated order status for order #' . $order_id);
+                $this->addLog('Updated order status to ' . $this->config->get('trustly_pending_status_id') . ' for order #' . $order_id);
                 break;
             case 'credit':
                 $notification_message = sprintf($this->language->get('text_message_payment_credited'),
@@ -401,7 +399,7 @@ class ControllerPaymentTrustly extends Controller
                 );
                 $this->model_checkout_order->confirm($order_id, $this->config->get('trustly_completed_status_id'), $notification_message, false);
                 $this->sendConfirmationMail($order_id, $notification_message);
-                $this->addLog('Updated order status for order #' . $order_id);
+                $this->addLog('Updated order status to ' . $this->config->get('trustly_completed_status_id') . ' for order #' . $order_id);
                 break;
             case 'debit':
                 $notification_message = sprintf($this->language->get('text_message_payment_debited'),
@@ -411,7 +409,7 @@ class ControllerPaymentTrustly extends Controller
                 );
                 $this->model_checkout_order->confirm($order_id, $this->config->get('trustly_refunded_status_id'), $notification_message, false);
                 $this->sendConfirmationMail($order_id, $notification_message);
-                $this->addLog('Updated order status for order #' . $order_id);
+                $this->addLog('Updated order status to ' .  $this->config->get('trustly_refunded_status_id') . ' for order #' . $order_id);
                 break;
             case 'cancel':
 				if (in_array($notification_method, $methods)) {
@@ -424,10 +422,11 @@ class ControllerPaymentTrustly extends Controller
                 );
                 $this->model_checkout_order->confirm($order_id, $this->config->get('trustly_canceled_status_id'), $notification_message, false);
                 $this->sendConfirmationMail($order_id, $notification_message);
-                $this->addLog('Updated order status for order #' . $order_id);
+                $this->addLog('Updated order status to ' . $this->config->get('trustly_canceled_status_id') . ' for order #' . $order_id);
                 break;
             default:
-                //
+				$this->addLog('Not processing ' . $notification_method . ' notification for order #' . $order_id);
+				break;
         }
 
         // Save Notification
@@ -515,11 +514,11 @@ class ControllerPaymentTrustly extends Controller
 
             return $response;
         } catch (Trustly_ConnectionException $e) {
-            $this->addLog('Trustly_ConnectionException: ' .  $e->getMessage());
+            $this->addLog('Deposit call failed with Trustly_ConnectionException: ' .  $e->getMessage());
         } catch (Trustly_DataException $e) {
-            $this->addLog('Trustly_DataException: ' .  $e->getMessage());
+            $this->addLog('Deposit call failed with Trustly_DataException: ' .  $e->getMessage());
         } catch (Exception $e) {
-            $this->addLog('Error: ' .  $e->getMessage());
+            $this->addLog('Deposit call failed with Error: ' .  $e->getMessage());
         }
 
         return false;
