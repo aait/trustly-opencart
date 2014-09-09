@@ -288,40 +288,6 @@ class ControllerPaymentTrustly extends Controller
             return false;
         }
 
-        // Validate credentials
-        try {
-            $api = $this->configureAPI($username, $password, $private_key, $test_mode);
-            $response = $api->hello();
-            if (!$response->isSuccess()) {
-                $body = json_decode($response->response_body);
-                if ($body->error->code === 616) {
-                    $this->error[] = $this->language->get('error_auth');
-                } else {
-                    $this->error[] = sprintf($this->language->get('error_response_code'),
-                        $response->getErrorCode(), $response->getErrorMessage());
-                }
-
-                return false;
-            }
-
-            if ($response->response_code !== 200) {
-                $this->error[] = sprintf($this->language->get('error_response_http'), $response->response_code);
-                return false;
-            }
-        } catch (Trustly_ConnectionException $e) {
-            $this->error[] = sprintf($this->language->get('error_cannot_connect'), $e->getMessage());
-            $this->error[] = $this->language->get('error_check_your_firewall');
-        } catch (Trustly_SignatureException $e) {
-            $this->error[] = $this->language->get('error_cannot_verify');
-        } catch (Trustly_AuthentificationException $e) {
-            $this->error[] = $this->language->get('error_auth');
-        } catch (Trustly_DataException $e) {
-            $this->error[] = $this->language->get('error_failed_communicate');
-        } catch (Exception $e) {
-            $this->error[] = sprintf($this->language->get('error_cannot_access'), $e->getMessage());
-            $this->error[] = $this->language->get('error_check_your_firewall');
-        }
-
         return (count($this->error) === 0);
     }
 
