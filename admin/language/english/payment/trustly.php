@@ -16,7 +16,7 @@ $_['text_username'] = 'Username';
 $_['text_password'] = 'Password';
 $_['text_private_key'] = 'Your private key';
 $_['text_test_mode'] = 'Use the Trustly test servers for payments';
-$_['text_notify_http'] = 'Requests notifications over HTTP rather then HTTPSe';
+$_['text_notify_http'] = 'Requests notifications over HTTP rather then HTTPS';
 $_['text_total'] = 'Total:<br /><span class="help">The checkout total the order must reach before this payment method becomes active.</span>';
 $_['text_complete_status'] = 'Completed Status';
 $_['text_pending_status'] = 'Pending Status';

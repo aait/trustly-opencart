@@ -16,7 +16,7 @@ $_['text_username'] = 'Användarnamn';
 $_['text_password'] = 'Lösenord';
 $_['text_private_key'] = 'Din privata nyckel';
 $_['text_test_mode'] = 'Använd Trustly test servrar för betalning';
-$_['text_notify_http'] = 'Begär meddelanden över HTTP iställer för HTTPSe';
+$_['text_notify_http'] = 'Begär meddelanden över HTTP iställer för HTTPS';
 $_['text_total'] = 'Totalt:<br /><span class="help">Den totala summan en order måste uppgå i innan betalningsmetoden aktiveras</span>';
 $_['text_complete_status'] = 'Färdigbehandlad status';
 $_['text_pending_status'] = 'Väntande Status';
