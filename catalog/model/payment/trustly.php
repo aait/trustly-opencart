@@ -84,8 +84,6 @@ class ModelPaymentTrustly extends Model
      */
     public function addTrustlyOrder($order_id, $trustly_order_id, $url)
     {
-        $this->installDbTables();
-
         $query = sprintf('INSERT INTO `' . DB_PREFIX . 'trustly_orders` (order_id, trustly_order_id, url) VALUES (%d, %d, "%s");',
             $this->db->escape((int)$order_id),
             $this->db->escape($trustly_order_id),
@@ -106,8 +104,6 @@ class ModelPaymentTrustly extends Model
      */
     public function getTrustlyOrder($order_id)
     {
-        $this->installDbTables();
-
         $query = sprintf("SELECT * FROM " . DB_PREFIX . "trustly_orders WHERE order_id=%d;",
             $this->db->escape((int)$order_id)
         );
@@ -127,8 +123,6 @@ class ModelPaymentTrustly extends Model
      */
     public function getTrustlyOrderId($order_id)
     {
-        $this->installDbTables();
-
         $query = sprintf("SELECT trustly_order_id FROM " . DB_PREFIX . "trustly_orders WHERE order_id=%d;",
             $this->db->escape((int)$order_id)
         );
@@ -149,8 +143,6 @@ class ModelPaymentTrustly extends Model
      */
     public function getOrderIdByTrustlyOrderId($trustly_order_id)
     {
-        $this->installDbTables();
-
         $query = sprintf("SELECT order_id FROM " . DB_PREFIX . "trustly_orders WHERE trustly_order_id=%d;",
             $this->db->escape((int)$trustly_order_id)
         );
@@ -171,8 +163,6 @@ class ModelPaymentTrustly extends Model
      */
     public function removeTrustlyOrder($trustly_order_id)
     {
-        $this->installDbTables();
-
         $query = sprintf("DELETE FROM " . DB_PREFIX . "trustly_orders WHERE trustly_order_id=%d;",
             $this->db->escape((int)$trustly_order_id)
         );
@@ -192,8 +182,6 @@ class ModelPaymentTrustly extends Model
      */
     public function addTrustlyNotification($notification_id, $trustly_order_id, $method, $amount, $currency, $date)
     {
-        $this->installDbTables();
-
         // Parse Trustly Timestamp
         $date = date('Y-m-d H:i:s', strtotime($date));
 
@@ -220,8 +208,6 @@ class ModelPaymentTrustly extends Model
      */
     public function getTrustlyNotifications($trustly_order_id)
     {
-        $this->installDbTables();
-
         $query = sprintf("SELECT * FROM " . DB_PREFIX . "trustly_notifications WHERE trustly_order_id=%d;",
             $this->db->escape((int)$trustly_order_id)
         );
