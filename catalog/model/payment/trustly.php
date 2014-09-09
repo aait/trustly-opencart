@@ -65,7 +65,7 @@ class ModelPaymentTrustly extends Model
 				  `notification_id` varchar(20) NOT NULL COMMENT 'Trustly Notification Id',
 				  `trustly_order_id` varchar(20) NOT NULL COMMENT 'Trustly Order Id',
 				  `method` varchar(50) DEFAULT NULL COMMENT 'Trustly Notification Method',
-				  `amount` float DEFAULT '0' COMMENT 'Payment amount',
+				  `amount` numeric DEFAULT '0' COMMENT 'Payment amount',
 				  `currency` varchar(3) DEFAULT NULL COMMENT 'Payment currency',
 				  `date` timestamp NULL DEFAULT NULL COMMENT 'Payment date',
 				  PRIMARY KEY (`notification_id`),
