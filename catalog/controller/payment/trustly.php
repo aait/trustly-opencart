@@ -7,6 +7,7 @@ require_once DIR_SYSTEM . 'library/trustly-client-php/Trustly.php';
 class ControllerPaymentTrustly extends Controller
 {
     protected $_module_name = 'trustly';
+    protected $_module_version = '1.0.0';
     protected $api;
 
     /**
@@ -466,7 +467,7 @@ class ControllerPaymentTrustly extends Controller
         $enduserid = strtolower($order['email']);
         $messageid = uniqid($order['order_id'] . '-', true);
         $store_name = html_entity_decode($order['store_name'], ENT_QUOTES, 'UTF-8');
-        $version_string = sprintf('OpenCart %s/%s %s', VERSION, 'Trustly', '1.0.0');
+        $version_string = sprintf('OpenCart %s/%s %s', VERSION, 'Trustly',  $this->_module_version);
 
         // Mixing POST and GET data is not supported so the NotificationURL must not contain a ? ("question mark")
         // Use wrapper to solve this problem
