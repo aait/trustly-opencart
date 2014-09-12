@@ -44,12 +44,17 @@ class ControllerPaymentTrustly extends Controller
 					'url' => $url
 				);
 			} else {
-				if($response === FALSE) {	
+                $error = $this->language->get('error_order_create');
+				if($response === FALSE) {
 					$this->addLog('Failed to create the Trustly order');
 				} else {
 					$this->addLog('Failed to create the Trustly order: ' . $response->getErrorCode() . ' - ' . $response->getErrorMessage());
-					throw new Exception($this->language->get('error_order_create'));
+                    $error = $response->getErrorMessage() . ' (' . $response->getErrorCode() . ')';
 				}
+
+                // Show Error
+                echo '<div class="warning">' . sprintf($this->language->get('error_trustly'), htmlspecialchars($error)) . '</div>';
+                return;
 			}
         }
 

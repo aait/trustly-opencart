@@ -22,4 +22,4 @@ $_['error_unknown'] = 'Unknown Error';
 $_['error_no_payment_url'] = 'An error occurred during the communication with Trustly web service: No payment url was received.';
 $_['error_payment_failed'] = 'Payment failed';
 $_['error_order_create'] = 'Could not create payment';
-
+$_['error_trustly'] = 'An error has occurred: %s';
