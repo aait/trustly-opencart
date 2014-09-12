@@ -23,3 +23,4 @@ $_['error_no_payment_url'] = 'Ett fel uppstod vid kommunikationen med Trustlys w
 $_['error_payment_failed'] = 'Betalningen misslyckades';
 $_['error_order_create'] = 'Kunde inte starta betalningen';
 $_['error_trustly'] = 'Ett problem har uppstått: %s';
+$_['error_message_payment_amount_invalid'] = 'Betalningen för den här ordern med beloppet %s av %s %s matchar inte totalbeloppet %s %s.';

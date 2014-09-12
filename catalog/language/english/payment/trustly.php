@@ -23,3 +23,4 @@ $_['error_no_payment_url'] = 'An error occurred during the communication with Tr
 $_['error_payment_failed'] = 'Payment failed';
 $_['error_order_create'] = 'Could not create payment';
 $_['error_trustly'] = 'An error has occurred: %s';
+$_['error_message_payment_amount_invalid'] = 'Trustly payment for this order at %s of %s %s does not match the order total of %s %s.';

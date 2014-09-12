@@ -374,6 +374,26 @@ class ControllerPaymentTrustly extends Controller
 		$this->addLog(sprintf('Notification Id: %s, Notification method: %s, Order Id: %s, Trustly Order Id: %s, Payment amount: %s %s',
 			$trustly_notification_id, $notification_method, $order_id, $trustly_order_id, $payment_amount, $payment_currency));
 
+        // Validate amount
+        $order_amount = $this->currency->format($order['total'], $order['currency_code'], $order['currency_value'], false);
+        if (bccomp($order_amount, $payment_amount, 2) !== 0 || $order['currency_code'] !== $payment_currency) {
+            $notification_message = sprintf($this->language->get('error_message_payment_amount_invalid'),
+                $payment_date,
+                $payment_amount,
+                $payment_currency,
+                $order_amount,
+                $order['currency_code']
+            );
+
+            // Set Order status
+            $this->model_checkout_order->update($order_id, $this->config->get('trustly_failed_status_id'), $notification_message, false);
+            $this->sendConfirmationMail($order_id, $notification_message);
+            $this->addLog('Updated order status to ' . $this->config->get('trustly_failed_status_id') . ' for order #' . $order_id);
+
+            // Change Notification method name
+            $notification_method = 'error-' . $notification_method;
+        }
+
         switch ($notification_method) {
             case 'pending':
 				if (in_array($notification_method, $methods)) {
