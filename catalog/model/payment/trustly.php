@@ -41,41 +41,6 @@ class ModelPaymentTrustly extends Model
     }
 
     /**
-     * Install Database Tables
-     */
-    public function installDbTables()
-    {
-        $res = $this->db->query("SHOW TABLES LIKE '" . DB_PREFIX . "trustly_orders'");
-        if ($res->num_rows === 0) {
-            $this->db->query("
-				CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "trustly_orders` (
-				  `order_id` int(10) NOT NULL COMMENT 'OpenCart Order Id',
-				  `trustly_order_id` varchar(20) NOT NULL COMMENT 'Trustly Order Id',
-				  `url` varchar(255) DEFAULT NULL COMMENT 'Trustly Payment URL',
-				  PRIMARY KEY (`order_id`),
-				  UNIQUE KEY `trustly_order_id` (`trustly_order_id`)
-				) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Trustly Orders Mapping';
-			");
-        }
-
-        $res = $this->db->query("SHOW TABLES LIKE '" . DB_PREFIX . "trustly_notifications'");
-        if ($res->num_rows === 0) {
-            $this->db->query("
-				CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "trustly_notifications` (
-				  `notification_id` varchar(20) NOT NULL COMMENT 'Trustly Notification Id',
-				  `trustly_order_id` varchar(20) NOT NULL COMMENT 'Trustly Order Id',
-				  `method` varchar(50) DEFAULT NULL COMMENT 'Trustly Notification Method',
-				  `amount` numeric DEFAULT '0' COMMENT 'Payment amount',
-				  `currency` varchar(3) DEFAULT NULL COMMENT 'Payment currency',
-				  `date` timestamp NULL DEFAULT NULL COMMENT 'Payment date',
-				  PRIMARY KEY (`notification_id`),
-				  KEY `trustly_order_id` (`trustly_order_id`)
-				) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Trustly Payment Notifications';
-			");
-        }
-    }
-
-    /**
      * Add Trustly Order
      * @param $trustly_order_id
      * @param $order_id

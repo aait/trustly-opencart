@@ -76,9 +76,6 @@ class ControllerPaymentTrustly extends Controller
         $this->load->language('payment/' . $this->_module_name);
         $this->load->model('setting/setting');
 
-        // Install DB Tables
-        $this->installDbTables();
-
         $this->document->setTitle($this->language->get('heading_title'));
 
         // Load texts
@@ -160,6 +157,10 @@ class ControllerPaymentTrustly extends Controller
 
             // Validate Form
             if ($this->validate()) {
+                // Install DB Tables
+                $this->installDbTables();
+
+                // Save settings
                 $this->save();
             }
         }
