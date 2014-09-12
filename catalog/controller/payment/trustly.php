@@ -106,7 +106,7 @@ class ControllerPaymentTrustly extends Controller
 
         // Set Pending status
         if (count($notifications) === 0) {
-            $this->model_checkout_order->confirm($order_id, $this->config->get('trustly_pending_status_id'), $this->language->get('text_message_payment_pending_notification'), false);
+            $this->model_checkout_order->update($order_id, $this->config->get('trustly_pending_status_id'), $this->language->get('text_message_payment_pending_notification'), false);
             $this->sendConfirmationMail($order_id, $this->language->get('text_message_payment_pending_notification'));
         }
 
@@ -386,7 +386,9 @@ class ControllerPaymentTrustly extends Controller
                     $payment_date,
                     $trustly_order_id
                 );
-                $this->model_checkout_order->confirm($order_id, $this->config->get('trustly_pending_status_id'), $notification_message, false);
+
+                // Set Order status
+                $this->model_checkout_order->update($order_id, $this->config->get('trustly_pending_status_id'), $notification_message, false);
                 $this->sendConfirmationMail($order_id, $notification_message);
                 $this->addLog('Updated order status to ' . $this->config->get('trustly_pending_status_id') . ' for order #' . $order_id);
                 break;
@@ -397,8 +399,10 @@ class ControllerPaymentTrustly extends Controller
                     $payment_date,
                     $trustly_order_id
                 );
-                $this->model_checkout_order->confirm($order_id, $this->config->get('trustly_completed_status_id'), $notification_message, false);
-                $this->sendConfirmationMail($order_id, $notification_message);
+
+                // Confirm Order
+                $this->model_checkout_order->confirm($order_id, $this->config->get('trustly_completed_status_id'), $notification_message, true);
+                //$this->sendConfirmationMail($order_id, $notification_message);
                 $this->addLog('Updated order status to ' . $this->config->get('trustly_completed_status_id') . ' for order #' . $order_id);
                 break;
             case 'debit':
@@ -407,7 +411,9 @@ class ControllerPaymentTrustly extends Controller
                     $payment_currency,
                     $payment_date
                 );
-                $this->model_checkout_order->confirm($order_id, $this->config->get('trustly_refunded_status_id'), $notification_message, false);
+
+                // Set Order status
+                $this->model_checkout_order->update($order_id, $this->config->get('trustly_refunded_status_id'), $notification_message, false);
                 $this->sendConfirmationMail($order_id, $notification_message);
                 $this->addLog('Updated order status to ' .  $this->config->get('trustly_refunded_status_id') . ' for order #' . $order_id);
                 break;
@@ -420,7 +426,9 @@ class ControllerPaymentTrustly extends Controller
                 $notification_message = sprintf($this->config->get('text_message_payment_canceled'),
                     $payment_date
                 );
-                $this->model_checkout_order->confirm($order_id, $this->config->get('trustly_canceled_status_id'), $notification_message, false);
+
+                // Set Order status
+                $this->model_checkout_order->update($order_id, $this->config->get('trustly_canceled_status_id'), $notification_message, false);
                 $this->sendConfirmationMail($order_id, $notification_message);
                 $this->addLog('Updated order status to ' . $this->config->get('trustly_canceled_status_id') . ' for order #' . $order_id);
                 break;
