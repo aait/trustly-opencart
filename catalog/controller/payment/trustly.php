@@ -374,6 +374,9 @@ class ControllerPaymentTrustly extends Controller
 		$this->addLog(sprintf('Notification Id: %s, Notification method: %s, Order Id: %s, Trustly Order Id: %s, Payment amount: %s %s',
 			$trustly_notification_id, $notification_method, $order_id, $trustly_order_id, $payment_amount, $payment_currency));
 
+        // Set Order status to "Pending"
+        $this->db->query("UPDATE `" . DB_PREFIX . "order` SET order_status_id = '" . (int)$this->config->get('trustly_pending_status_id') . "', date_modified = NOW() WHERE order_id = '" . (int)$order_id . "'");
+
         // Validate amount
         $order_amount = $this->currency->format($order['total'], $order['currency_code'], $order['currency_value'], false);
         if (bccomp($order_amount, $payment_amount, 2) !== 0 || $order['currency_code'] !== $payment_currency) {
