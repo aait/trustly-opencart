@@ -388,13 +388,8 @@ class ControllerPaymentTrustly extends Controller
                 $order['currency_code']
             );
 
-            // Set Order status
-            $this->model_checkout_order->update($order_id, $this->config->get('trustly_failed_status_id'), $notification_message, false);
-            $this->sendConfirmationMail($order_id, $notification_message);
-            $this->addLog('Updated order status to ' . $this->config->get('trustly_failed_status_id') . ' for order #' . $order_id);
-
-            // Change Notification method name
-            $notification_method = 'error-' . $notification_method;
+            // Add Order History
+            $this->db->query("INSERT INTO " . DB_PREFIX . "order_history SET order_id = '" . (int)$order_id . "', order_status_id = '" . (int)$this->config->get('trustly_pending_status_id') . "', notify = '0', comment = '" . $this->db->escape($notification_message) . "', date_added = NOW()");
         }
 
         switch ($notification_method) {
@@ -429,6 +424,7 @@ class ControllerPaymentTrustly extends Controller
                 );
 
                 // Confirm Order
+                $this->db->query("UPDATE `" . DB_PREFIX . "order` SET order_status_id = '0', date_modified = NOW() WHERE order_id = '" . (int)$order_id . "'");
                 $this->model_checkout_order->confirm($order_id, $this->config->get('trustly_completed_status_id'), $notification_message, true);
                 //$this->sendConfirmationMail($order_id, $notification_message);
                 $this->addLog('Updated order status to ' . $this->config->get('trustly_completed_status_id') . ' for order #' . $order_id);
