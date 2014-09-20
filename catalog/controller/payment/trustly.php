@@ -494,12 +494,14 @@ class ControllerPaymentTrustly extends Controller
         }
 
         if (!$amount) {
-            $amount = $this->currency->format($order['total'], $order['currency_code'], $order['currency_value'], false);
+            //$amount = $this->currency->format($order['total'], $order['currency_code'], $order['currency_value'], false);
+            $amount = $order['total'];
         }
 
         // Get all the data needed to process the payment
         $locale = $this->getLocale($this->language->get('code'));
-        $currency = $order['currency_code'];
+        //$currency = $order['currency_code'];
+        $currency = $this->config->get('config_currency');
         $country = $order['payment_iso_code_2'];
         $client_ip = $order['ip'];
         $phone = $order['telephone'];
