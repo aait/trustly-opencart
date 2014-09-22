@@ -378,14 +378,14 @@ class ControllerPaymentTrustly extends Controller
         $this->db->query("UPDATE `" . DB_PREFIX . "order` SET order_status_id = '" . (int)$this->config->get('trustly_pending_status_id') . "', date_modified = NOW() WHERE order_id = '" . (int)$order_id . "'");
 
         // Validate amount
-        $order_amount = $this->currency->format($order['total'], $order['currency_code'], $order['currency_value'], false);
-        if (bccomp($order_amount, $payment_amount, 2) !== 0 || $order['currency_code'] !== $payment_currency) {
+        //$order_amount = $this->currency->format($order['total'], $order['currency_code'], $order['currency_value'], false);
+        if (bccomp($order['total'], $payment_amount, 2) !== 0 || $this->config->get('config_currency') !== $payment_currency) {
             $notification_message = sprintf($this->language->get('error_message_payment_amount_invalid'),
                 $payment_date,
                 $payment_amount,
                 $payment_currency,
-                $order_amount,
-                $order['currency_code']
+                $order['total'],
+                $this->config->get('config_currency')
             );
 
             // Add Order History
