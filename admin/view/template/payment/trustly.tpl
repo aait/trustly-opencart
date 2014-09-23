@@ -72,7 +72,7 @@
 			</td>
 		</tr>
 
-<?php if(version_compare(phpversion(), '5.2.0', '>=')) { ?> 
+<?php if(version_compare(phpversion(), '5.2.0', '>=')): ?> 
 		<tr>
 			<td>
 				<label for="trustly_key_new"><?php echo $text_rsa_keys; ?></label>
@@ -86,7 +86,7 @@
 				<pre id="trustly_key_public_key"></pre>
 			</td>
 		</tr>
-<?php } ?>
+<?php endif; ?>
 
 		<tr>
 			<td>
