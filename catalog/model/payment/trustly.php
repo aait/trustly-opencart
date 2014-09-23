@@ -146,10 +146,7 @@ class ModelPaymentTrustly extends Model
      * @return bool
      */
     public function addTrustlyNotification($notification_id, $trustly_order_id, $method, $amount, $currency, $date)
-    {
-        // Parse Trustly Timestamp
-        $date = date('Y-m-d H:i:s', strtotime($date));
-
+	{
         $query = sprintf('INSERT INTO `' . DB_PREFIX . 'trustly_notifications` (notification_id, trustly_order_id, method, amount, currency, date) VALUES (%d, %d, "%s", %f, "%s", "%s");',
             $this->db->escape($notification_id),
             $this->db->escape($trustly_order_id),

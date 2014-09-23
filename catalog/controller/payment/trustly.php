@@ -368,8 +368,12 @@ class ControllerPaymentTrustly extends Controller
 		}
 
         $payment_currency = $notification->getData('currency');
-        $payment_amount = $notification->getData('amount');
-        $payment_date = date('Y-m-d H:i:s', strtotime($notification->getData('timestamp')));
+		$payment_amount = $notification->getData('amount');
+		if($notification->getData('timestamp')) {
+			$payment_date = date('Y-m-d H:i:s', strtotime($notification->getData('timestamp')));
+		} else {
+			$payment_date = date('Y-m-d H:i:s');
+		}
 
 		$this->addLog(sprintf('Notification Id: %s, Notification method: %s, Order Id: %s, Trustly Order Id: %s, Payment amount: %s %s',
 			$trustly_notification_id, $notification_method, $order_id, $trustly_order_id, $payment_amount, $payment_currency));
