@@ -71,6 +71,19 @@
 				<textarea rows="10" cols="45" name="trustly_private_key" id="trustly_private_key" style="width: 500px; height: 390px;"><?php echo $trustly_private_key; ?></textarea>
 			</td>
 		</tr>
+        <tr>
+            <td>
+                <label for="trustly_key_new"><?php echo $text_rsa_keys; ?></label>
+            </td>
+            <td>
+                <div class="buttons">
+                    <a id="trustly_key_new" class="button"><?php echo $text_new_private_key; ?></a>
+                    <a id="trustly_key_show" class="button"><?php echo $text_show_public_key; ?></a>
+                </div>
+                <p style="display: none;" class="trustly_key_new_display"><?php echo $text_new_key_generated; ?></p>
+                <pre id="trustly_key_public_key"></pre>
+            </td>
+        </tr>
 		<tr>
 			<td>
 				<label for="trustly_test_mode"><?php echo $text_test_mode; ?></label>
@@ -304,6 +317,45 @@
 			}
 		});
 	}
+
+    $('#trustly_key_new, #trustly_key_show').click(function(ev) {
+        var data;
+        var ajaxurl = '<?php echo html_entity_decode($action, ENT_QUOTES, 'UTF-8'); ?>'; 
+        $('.trustly_key_new_display').hide();
+
+        if(this.id.substr(-3) == 'new') {
+            if($('#trustly_private_key').val() != '' && !window.confirm('<?php echo $text_warning_private_key_exists; ?>')) {
+                return false;
+            }
+            data = {
+                'action': 'trustly_generate_rsa_key'
+            };
+        } else {
+            data = {
+                'action': 'trustly_generate_rsa_public_key',
+                'private_key': $('#trustly_private_key').val()
+            };
+        }
+
+        $.post(ajaxurl, data, function(response) {
+            try {
+                response = JSON.parse(response);
+                if(!response.hasOwnProperty('public_key') || response.public_key == null) {
+                    throw 'Missing public_key in response';
+                }
+                $('#trustly_key_public_key').text(response.public_key);
+                if(response.hasOwnProperty('private_key')) {
+                    $('.trustly_key_new_display').show();
+                    $('#trustly_private_key').val(response.private_key);
+                }
+            } catch (e) {
+                alert('<?php echo $text_failed_generate_key; ?>');
+                console.log('Failed to generate key: ' + e);
+            }
+        });
+        ev.preventDefault();
+        return false;
+    });
 
 	//--></script>
 <?php echo $footer ?>

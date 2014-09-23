@@ -65,7 +65,13 @@ class ControllerPaymentTrustly extends Controller
         'text_wait',
         'text_refund',
         'text_refunded',
-        'text_refund_performed'
+		'text_refund_performed',
+		'text_new_private_key',
+		'text_show_public_key',
+		'text_rsa_keys',
+		'text_failed_generate_key',
+		'text_warning_private_key_exists',
+		'text_new_key_generated'
     );
 
     /**
@@ -102,26 +108,26 @@ class ControllerPaymentTrustly extends Controller
         $this->data['cancel'] = $this->url->link('extension/payment', 'token=' . $this->session->data['token'], 'SSL');
 
         if (($this->request->server['REQUEST_METHOD'] === 'POST')) {
-            if (isset($this->request->post['action'])) {
-                $this->load->model('sale/order');
-
-                $order_id = $this->request->post['order_id'];
-                $trustly_order_id = $this->request->post['trustly_order_id'];
-
-                // Check order
-                $order = $this->model_sale_order->getOrder($order_id);
-                if (!$order) {
-                    $json = array(
-                        'status' => 'error',
-                        'message' => 'Invalid order Id'
-                    );
-                    $this->response->setOutput(json_encode($json));
-                    return;
-                }
-
+			if (isset($this->request->post['action'])) {
                 // Actions
                 switch ($this->request->post['action']) {
                     case 'refund':
+						$this->load->model('sale/order');
+
+						$order_id = $this->request->post['order_id'];
+						$trustly_order_id = $this->request->post['trustly_order_id'];
+
+						// Check order
+						$order = $this->model_sale_order->getOrder($order_id);
+						if (!$order) {
+							$json = array(
+								'status' => 'error',
+								'message' => 'Invalid order Id'
+							);
+							$this->response->setOutput(json_encode($json));
+							return;
+						}
+
                         // Refund
                         $amount = $this->request->post['amount'];
                         $currency = $this->request->post['currency'];
@@ -149,20 +155,48 @@ class ControllerPaymentTrustly extends Controller
                             'label' => $this->data['text_refunded']
                         );
                         $this->response->setOutput(json_encode($json));
-                        return;
+						return;
+					case 'trustly_generate_rsa_key':
+						$config = array(
+							"digest_alg" => "sha512",
+							"private_key_bits" => 2048,
+							"private_key_type" => OPENSSL_KEYTYPE_RSA,
+						);
+
+						$new_key = openssl_pkey_new($config);
+						openssl_pkey_export($new_key, $priv_key);
+						$pub_key = openssl_pkey_get_details($new_key);
+
+						$json = array(
+							'public_key' => $pub_key['key'],
+							'private_key' => $priv_key
+						);
+                        $this->response->setOutput(json_encode($json));
+
+						return;
+					case 'trustly_generate_rsa_public_key':
+						$new_key = openssl_pkey_get_private($this->request->post['private_key']);
+						$pub_key = openssl_pkey_get_details($new_key);
+
+						$json = array(
+							'public_key' => $pub_key['key']
+						);
+                        $this->response->setOutput(json_encode($json));
+
+						return;
                     default:
                         //
                 }
-            }
+            } else {
+				// Validate Form
+				if ($this->validate()) {
+					// Install DB Tables
+					$this->installDbTables();
 
-            // Validate Form
-            if ($this->validate()) {
-                // Install DB Tables
-                $this->installDbTables();
-
-                // Save settings
-                $this->save();
-            }
+					// Save settings
+					$this->save();
+				}
+			}
         }
 
         // Errors

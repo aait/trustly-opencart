@@ -55,4 +55,9 @@ $_['error_check_your_firewall'] = 'Check your firewall and network configuration
 $_['error_cannot_verify'] = 'Cannot verify the authenticity of Trustly communication.';
 $_['error_failed_communicate'] = 'Failed to communicate with Trustly.';
 $_['error_cannot_access'] = 'Cannot access payment gateway: %s';
-
+$_['text_new_private_key'] = 'Generate new keypair';
+$_['text_show_public_key'] = 'Show public key';
+$_['text_rsa_keys'] = 'RSA Keys';
+$_['text_failed_generate_key'] = 'Failed to generate keypair. Visit https://trustly.com/en/developer for information on how to generate your keys';
+$_['text_warning_private_key_exists'] = 'There is already a RSA key!\n\nThe RSA key is a part of your identity and you will not be able to use the new key to make payments in this system until the new public part has been communicated to Trustly.\n\nDo you wish to generate a new key?\nThe new RSA key will not be active until you press "Save" above.';
+$_['text_new_key_generated'] = 'A new keypair has been generated (the key is not activated until you press "Save" above). The public part of the key must be activated on your processing account before you can use the private key. Coordinate the use of a new key with your Account Manager at Trustly.';
