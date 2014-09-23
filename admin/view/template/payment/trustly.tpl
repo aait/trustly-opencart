@@ -64,13 +64,15 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td valign="top">
 				<label for="trustly_private_key"><?php echo $text_private_key; ?></label>
 			</td>
 			<td>
 				<textarea rows="10" cols="45" name="trustly_private_key" id="trustly_private_key" style="width: 500px; height: 390px;"><?php echo $trustly_private_key; ?></textarea>
 			</td>
 		</tr>
+
+<?php if(version_compare(phpversion(), '5.2.0', '>=')) { ?> 
         <tr>
             <td>
                 <label for="trustly_key_new"><?php echo $text_rsa_keys; ?></label>
@@ -84,6 +86,8 @@
                 <pre id="trustly_key_public_key"></pre>
             </td>
         </tr>
+<?php } ?>
+
 		<tr>
 			<td>
 				<label for="trustly_test_mode"><?php echo $text_test_mode; ?></label>
