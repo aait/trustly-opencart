@@ -65,13 +65,13 @@ class ControllerPaymentTrustly extends Controller
         'text_wait',
         'text_refund',
         'text_refunded',
-		'text_refund_performed',
-		'text_new_private_key',
-		'text_show_public_key',
-		'text_rsa_keys',
-		'text_failed_generate_key',
-		'text_warning_private_key_exists',
-		'text_new_key_generated'
+        'text_refund_performed',
+        'text_new_private_key',
+        'text_show_public_key',
+        'text_rsa_keys',
+        'text_failed_generate_key',
+        'text_warning_private_key_exists',
+        'text_new_key_generated'
     );
 
     /**
@@ -108,95 +108,95 @@ class ControllerPaymentTrustly extends Controller
         $this->data['cancel'] = $this->url->link('extension/payment', 'token=' . $this->session->data['token'], 'SSL');
 
         if (($this->request->server['REQUEST_METHOD'] === 'POST')) {
-			if (isset($this->request->post['action'])) {
+            if (isset($this->request->post['action'])) {
                 // Actions
                 switch ($this->request->post['action']) {
-                    case 'refund':
-						$this->load->model('sale/order');
+                case 'refund':
+                    $this->load->model('sale/order');
 
-						$order_id = $this->request->post['order_id'];
-						$trustly_order_id = $this->request->post['trustly_order_id'];
+                    $order_id = $this->request->post['order_id'];
+                    $trustly_order_id = $this->request->post['trustly_order_id'];
 
-						// Check order
-						$order = $this->model_sale_order->getOrder($order_id);
-						if (!$order) {
-							$json = array(
-								'status' => 'error',
-								'message' => 'Invalid order Id'
-							);
-							$this->response->setOutput(json_encode($json));
-							return;
-						}
-
-                        // Refund
-                        $amount = $this->request->post['amount'];
-                        $currency = $this->request->post['currency'];
-
-                        $response = $this->getAPI()->refund($trustly_order_id, $amount, $currency);
-                        if (!$response->isSuccess()) {
-                            $json = array(
-                                'status' => 'error',
-                                'message' => sprintf('%s (%s)', $response->getErrorCode(), $response->getErrorMessage())
-                            );
-                            $this->response->setOutput(json_encode($json));
-                            return;
-                        }
-
-                        // Set Order Status
-                        $this->model_sale_order->addOrderHistory($order_id, array(
-                            'order_status_id' => $this->data['trustly_refunded_status_id'],
-                            'notify' => false,
-                            'comment' => sprintf($this->data['text_refund_performed'], $amount, $currency, date('Y-m-d H:i:s'))
-                        ));
-
+                    // Check order
+                    $order = $this->model_sale_order->getOrder($order_id);
+                    if (!$order) {
                         $json = array(
-                            'status' => 'ok',
-                            'message' => 'Order successfully refunded.',
-                            'label' => $this->data['text_refunded']
+                            'status' => 'error',
+                            'message' => 'Invalid order Id'
                         );
                         $this->response->setOutput(json_encode($json));
-						return;
-					case 'trustly_generate_rsa_key':
-						$config = array(
-							"digest_alg" => "sha512",
-							"private_key_bits" => 2048,
-							"private_key_type" => OPENSSL_KEYTYPE_RSA,
-						);
+                        return;
+                    }
 
-						$new_key = openssl_pkey_new($config);
-						openssl_pkey_export($new_key, $priv_key);
-						$pub_key = openssl_pkey_get_details($new_key);
+                    // Refund
+                    $amount = $this->request->post['amount'];
+                    $currency = $this->request->post['currency'];
 
-						$json = array(
-							'public_key' => $pub_key['key'],
-							'private_key' => $priv_key
-						);
+                    $response = $this->getAPI()->refund($trustly_order_id, $amount, $currency);
+                    if (!$response->isSuccess()) {
+                        $json = array(
+                            'status' => 'error',
+                            'message' => sprintf('%s (%s)', $response->getErrorCode(), $response->getErrorMessage())
+                        );
                         $this->response->setOutput(json_encode($json));
+                        return;
+                    }
 
-						return;
-					case 'trustly_generate_rsa_public_key':
-						$new_key = openssl_pkey_get_private($this->request->post['private_key']);
-						$pub_key = openssl_pkey_get_details($new_key);
+                    // Set Order Status
+                    $this->model_sale_order->addOrderHistory($order_id, array(
+                        'order_status_id' => $this->data['trustly_refunded_status_id'],
+                        'notify' => false,
+                        'comment' => sprintf($this->data['text_refund_performed'], $amount, $currency, date('Y-m-d H:i:s'))
+                    ));
 
-						$json = array(
-							'public_key' => $pub_key['key']
-						);
-                        $this->response->setOutput(json_encode($json));
+                    $json = array(
+                        'status' => 'ok',
+                        'message' => 'Order successfully refunded.',
+                        'label' => $this->data['text_refunded']
+                    );
+                    $this->response->setOutput(json_encode($json));
+                    return;
+                case 'trustly_generate_rsa_key':
+                    $config = array(
+                        "digest_alg" => "sha512",
+                        "private_key_bits" => 2048,
+                        "private_key_type" => OPENSSL_KEYTYPE_RSA,
+                    );
 
-						return;
-                    default:
-                        //
+                    $new_key = openssl_pkey_new($config);
+                    openssl_pkey_export($new_key, $priv_key);
+                    $pub_key = openssl_pkey_get_details($new_key);
+
+                    $json = array(
+                        'public_key' => $pub_key['key'],
+                        'private_key' => $priv_key
+                    );
+                    $this->response->setOutput(json_encode($json));
+
+                    return;
+                case 'trustly_generate_rsa_public_key':
+                    $new_key = openssl_pkey_get_private($this->request->post['private_key']);
+                    $pub_key = openssl_pkey_get_details($new_key);
+
+                    $json = array(
+                        'public_key' => $pub_key['key']
+                    );
+                    $this->response->setOutput(json_encode($json));
+
+                    return;
+                default:
+                    //
                 }
             } else {
-				// Validate Form
-				if ($this->validate()) {
-					// Install DB Tables
-					$this->installDbTables();
+                // Validate Form
+                if ($this->validate()) {
+                    // Install DB Tables
+                    $this->installDbTables();
 
-					// Save settings
-					$this->save();
-				}
-			}
+                    // Save settings
+                    $this->save();
+                }
+            }
         }
 
         // Errors
@@ -416,30 +416,30 @@ class ControllerPaymentTrustly extends Controller
         $res = $this->db->query("SHOW TABLES LIKE '" . DB_PREFIX . "trustly_orders'");
         if ($res->num_rows === 0) {
             $this->db->query("
-				CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "trustly_orders` (
-				  `order_id` int(10) NOT NULL COMMENT 'OpenCart Order Id',
-				  `trustly_order_id` varchar(20) NOT NULL COMMENT 'Trustly Order Id',
-				  `url` varchar(255) DEFAULT NULL COMMENT 'Trustly Payment URL',
-				  PRIMARY KEY (`order_id`),
-				  UNIQUE KEY `trustly_order_id` (`trustly_order_id`)
-				) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Trustly Orders Mapping';
-			");
+                CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "trustly_orders` (
+                    `order_id` int(10) NOT NULL COMMENT 'OpenCart Order Id',
+                    `trustly_order_id` varchar(20) NOT NULL COMMENT 'Trustly Order Id',
+                    `url` varchar(255) DEFAULT NULL COMMENT 'Trustly Payment URL',
+                    PRIMARY KEY (`order_id`),
+                    UNIQUE KEY `trustly_order_id` (`trustly_order_id`)
+        ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Trustly Orders Mapping';
+            ");
         }
 
         $res = $this->db->query("SHOW TABLES LIKE '" . DB_PREFIX . "trustly_notifications'");
         if ($res->num_rows === 0) {
             $this->db->query("
-				CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "trustly_notifications` (
-				  `notification_id` varchar(20) NOT NULL COMMENT 'Trustly Notification Id',
-				  `trustly_order_id` varchar(20) NOT NULL COMMENT 'Trustly Order Id',
-				  `method` varchar(50) DEFAULT NULL COMMENT 'Trustly Notification Method',
-				  `amount` numeric DEFAULT '0' COMMENT 'Payment amount',
-				  `currency` varchar(3) DEFAULT NULL COMMENT 'Payment currency',
-				  `date` timestamp NULL DEFAULT NULL COMMENT 'Payment date',
-				  PRIMARY KEY (`notification_id`),
-				  KEY `trustly_order_id` (`trustly_order_id`)
-				) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Trustly Payment Notifications';
-			");
+                CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "trustly_notifications` (
+                    `notification_id` varchar(20) NOT NULL COMMENT 'Trustly Notification Id',
+                    `trustly_order_id` varchar(20) NOT NULL COMMENT 'Trustly Order Id',
+                    `method` varchar(50) DEFAULT NULL COMMENT 'Trustly Notification Method',
+                    `amount` numeric DEFAULT '0' COMMENT 'Payment amount',
+                    `currency` varchar(3) DEFAULT NULL COMMENT 'Payment currency',
+                    `date` timestamp NULL DEFAULT NULL COMMENT 'Payment date',
+                    PRIMARY KEY (`notification_id`),
+                    KEY `trustly_order_id` (`trustly_order_id`)
+        ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Trustly Payment Notifications';
+            ");
         }
     }
 }
