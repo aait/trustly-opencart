@@ -377,20 +377,6 @@ class ControllerPaymentTrustly extends Controller
         // Set Order status to "Pending"
         $this->db->query("UPDATE `" . DB_PREFIX . "order` SET order_status_id = '" . (int)$this->config->get('trustly_pending_status_id') . "', date_modified = NOW() WHERE order_id = '" . (int)$order_id . "'");
 
-        // Validate amount
-        //$order_amount = $this->currency->format($order['total'], $order['currency_code'], $order['currency_value'], false);
-        if (bccomp($order['total'], $payment_amount, 2) !== 0 || $this->config->get('config_currency') !== $payment_currency) {
-            $notification_message = sprintf($this->language->get('error_message_payment_amount_invalid'),
-                $payment_date,
-                $payment_amount,
-                $payment_currency,
-                $order['total'],
-                $this->config->get('config_currency')
-            );
-
-            // Add Order History
-            $this->db->query("INSERT INTO " . DB_PREFIX . "order_history SET order_id = '" . (int)$order_id . "', order_status_id = '" . (int)$this->config->get('trustly_pending_status_id') . "', notify = '0', comment = '" . $this->db->escape($notification_message) . "', date_added = NOW()");
-        }
 
         switch ($notification_method) {
             case 'pending':
@@ -416,6 +402,21 @@ class ControllerPaymentTrustly extends Controller
                 $this->addLog('Updated order status to ' . $this->config->get('trustly_pending_status_id') . ' for order #' . $order_id);
                 break;
             case 'credit':
+				// Validate amount
+				//$order_amount = $this->currency->format($order['total'], $order['currency_code'], $order['currency_value'], false);
+				if (bccomp($order['total'], $payment_amount, 2) !== 0 || $this->config->get('config_currency') !== $payment_currency) {
+					$notification_message = sprintf($this->language->get('error_message_payment_amount_invalid'),
+						$payment_date,
+						$payment_amount,
+						$payment_currency,
+						$order['total'],
+						$this->config->get('config_currency')
+					);
+
+					// Add Order History
+					$this->db->query("INSERT INTO " . DB_PREFIX . "order_history SET order_id = '" . (int)$order_id . "', order_status_id = '" . (int)$this->config->get('trustly_pending_status_id') . "', notify = '0', comment = '" . $this->db->escape($notification_message) . "', date_added = NOW()");
+				}
+
                 $notification_message = sprintf($this->language->get('text_message_payment_credited'),
                     $payment_amount,
                     $payment_currency,
