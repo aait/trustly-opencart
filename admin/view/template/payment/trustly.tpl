@@ -33,16 +33,16 @@
 
 <form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data" id="form">
 <div id="tab-settings">
-    <div style="margin-bottom:10px; padding:10px 5px 5px 10px; height: 400px; ">
-        <iframe src="https://trustly.com/opencart" style="width: 100%%; height: 400px; border: 1px solid #D6D6D6;"></iframe>
-    </div>
-    <div class="backoffice">
-        <p><?php echo $text_backoffice_info; ?></p>
-        <ul>
-            <li><?php echo $text_backoffice_link_live; ?> <a href="https://trustly.com/backoffice" target="_blank">https://trustly.com/backoffice</a></li>
-            <li><?php echo $text_backoffice_link_test; ?> <a href="https://test.trustly.com/backoffice" target="_blank">https://test.trustly.com/backoffice</a></li>
-        </ul>
-    </div>
+	<div style="margin-bottom:10px; padding:10px 5px 5px 10px; height: 400px; ">
+		<iframe src="https://trustly.com/opencart" style="width: 100%%; height: 400px; border: 1px solid #D6D6D6;"></iframe>
+	</div>
+	<div class="backoffice">
+		<p><?php echo $text_backoffice_info; ?></p>
+		<ul>
+			<li><?php echo $text_backoffice_link_live; ?> <a href="https://trustly.com/backoffice" target="_blank">https://trustly.com/backoffice</a></li>
+			<li><?php echo $text_backoffice_link_test; ?> <a href="https://test.trustly.com/backoffice" target="_blank">https://test.trustly.com/backoffice</a></li>
+		</ul>
+	</div>
 
 	<table class="form">
 		<tr>
@@ -73,19 +73,19 @@
 		</tr>
 
 <?php if(version_compare(phpversion(), '5.2.0', '>=')) { ?> 
-        <tr>
-            <td>
-                <label for="trustly_key_new"><?php echo $text_rsa_keys; ?></label>
-            </td>
-            <td>
-                <div class="buttons">
-                    <a id="trustly_key_new" class="button"><?php echo $text_new_private_key; ?></a>
-                    <a id="trustly_key_show" class="button"><?php echo $text_show_public_key; ?></a>
-                </div>
-                <p style="display: none;" class="trustly_key_new_display"><?php echo $text_new_key_generated; ?></p>
-                <pre id="trustly_key_public_key"></pre>
-            </td>
-        </tr>
+		<tr>
+			<td>
+				<label for="trustly_key_new"><?php echo $text_rsa_keys; ?></label>
+			</td>
+			<td>
+				<div class="buttons">
+					<a id="trustly_key_new" class="button"><?php echo $text_new_private_key; ?></a>
+					<a id="trustly_key_show" class="button"><?php echo $text_show_public_key; ?></a>
+				</div>
+				<p style="display: none;" class="trustly_key_new_display"><?php echo $text_new_key_generated; ?></p>
+				<pre id="trustly_key_public_key"></pre>
+			</td>
+		</tr>
 <?php } ?>
 
 		<tr>
@@ -196,7 +196,7 @@
 					<?php else: ?>
 					<option
 						value="<?php echo $geo_zone['geo_zone_id']; ?>"><?php echo $geo_zone['name']; ?>
-                    </option>
+					</option>
 					<?php endif; ?>
 					<?php endforeach; ?>
 				</select>
@@ -227,36 +227,36 @@
 
 <?php if (count($orders) > 0): ?>
 <div id="tab-orders">
-    <table class="form">
-        <thead>
-        <tr>
-            <th><?php echo $text_order_id; ?></th>
-            <th><?php echo $text_trustly_order_id; ?></th>
-            <th><?php echo $text_notification_id; ?></th>
-            <th><?php echo $text_amount; ?></th>
-            <th><?php echo $text_date; ?></th>
-            <th><?php echo $text_actions; ?></th>
-        </tr>
-        </thead>
-        <tbody>
-        <?php foreach ($orders as $order): ?>
-        <tr style="text-align: center;">
-            <td><?php echo $order['order_id']; ?></td>
-            <td><?php echo $order['trustly_order_id']; ?></td>
-            <td><?php echo $order['notification_id']; ?></td>
-            <td><?php echo sprintf('%.2f %s', $order['total'], $order['currency_code']); ?></td>
-            <td><?php echo $order['date']; ?></td>
-            <td>
-                <input type="button" class="refund_button" name="refund_button"
-                       value="<?php echo $text_refund; ?>" data-order-id="<?php echo $order['order_id']; ?>"
-                       data-trustly-order-id="<?php echo $order['trustly_order_id']; ?>"
-                       data-currency="<?php echo $order['currency_code']; ?>">
-            </td>
-        </tr>
-        <?php endforeach; ?>
-        </tbody>
-    </table>
-    <div class="pagination"><?php echo $pagination; ?></div>
+	<table class="form">
+		<thead>
+		<tr>
+			<th><?php echo $text_order_id; ?></th>
+			<th><?php echo $text_trustly_order_id; ?></th>
+			<th><?php echo $text_notification_id; ?></th>
+			<th><?php echo $text_amount; ?></th>
+			<th><?php echo $text_date; ?></th>
+			<th><?php echo $text_actions; ?></th>
+		</tr>
+		</thead>
+		<tbody>
+		<?php foreach ($orders as $order): ?>
+		<tr style="text-align: center;">
+			<td><?php echo $order['order_id']; ?></td>
+			<td><?php echo $order['trustly_order_id']; ?></td>
+			<td><?php echo $order['notification_id']; ?></td>
+			<td><?php echo sprintf('%.2f %s', $order['total'], $order['currency_code']); ?></td>
+			<td><?php echo $order['date']; ?></td>
+			<td>
+				<input type="button" class="refund_button" name="refund_button"
+						value="<?php echo $text_refund; ?>" data-order-id="<?php echo $order['order_id']; ?>"
+						data-trustly-order-id="<?php echo $order['trustly_order_id']; ?>"
+						data-currency="<?php echo $order['currency_code']; ?>">
+			</td>
+		</tr>
+		<?php endforeach; ?>
+		</tbody>
+	</table>
+	<div class="pagination"><?php echo $pagination; ?></div>
 </div>
 <?php endif; ?>
 
@@ -265,24 +265,24 @@
 </div>
 </div>
 <script type="text/javascript"><!--
-    $(document ).ready(function() {
-        // Activate Tabs
-        $('#tabs a').tabs();
+	$(document ).ready(function() {
+		// Activate Tabs
+		$('#tabs a').tabs();
 
-        // Select Orders Tab
-        var current_url = document.URL;
-        if (current_url.indexOf('page') > -1) {
-            $("#tabs a[href^='#tab-orders']").click();
-        }
-    });
+		// Select Orders Tab
+		var current_url = document.URL;
+		if (current_url.indexOf('page') > -1) {
+			$("#tabs a[href^='#tab-orders']").click();
+		}
+	});
 
-    // Refund Action
+	// Refund Action
 	$('.refund_button').on('click', function () {
 		var total_refunded = prompt('Enter refund amount:', '0');
-            //Always use the dot as decimal separator
-        if(total_refunded.indexOf('.') == -1 && total_refunded.indexOf(',') > 0) {
-            total_refunded = total_refunded.replace(/,/g, '.');
-        }
+			//Always use the dot as decimal separator
+		if(total_refunded.indexOf('.') == -1 && total_refunded.indexOf(',') > 0) {
+			total_refunded = total_refunded.replace(/,/g, '.');
+		}
 
 		if (parseInt(total_refunded) > 0) {
 			call_refund(this, total_refunded);
@@ -291,8 +291,8 @@
 
 	function call_refund(el, amount) {
 		var order_id = $(el).data('order-id');
-        var trustly_order_id = $(el).data('trustly-order-id');
-        var currency = $(el).data('currency');
+		var trustly_order_id = $(el).data('trustly-order-id');
+		var currency = $(el).data('currency');
 		var current_label = $(el).val();
 		$(el).attr('disabled', 'disabled');
 		$(el).val('<?php echo $text_wait; ?>');
@@ -306,9 +306,9 @@
 			data: {
 				action: 'refund',
 				order_id: order_id,
-                trustly_order_id: trustly_order_id,
+				trustly_order_id: trustly_order_id,
 				amount: amount,
-                currency: currency
+				currency: currency
 			},
 			success: function (response) {
 				if (response.status !== 'ok') {
@@ -322,44 +322,44 @@
 		});
 	}
 
-    $('#trustly_key_new, #trustly_key_show').click(function(ev) {
-        var data;
-        var ajaxurl = '<?php echo html_entity_decode($action, ENT_QUOTES, 'UTF-8'); ?>'; 
-        $('.trustly_key_new_display').hide();
+	$('#trustly_key_new, #trustly_key_show').click(function(ev) {
+		var data;
+		var ajaxurl = '<?php echo html_entity_decode($action, ENT_QUOTES, 'UTF-8'); ?>'; 
+		$('.trustly_key_new_display').hide();
 
-        if(this.id.substr(-3) == 'new') {
-            if($('#trustly_private_key').val() != '' && !window.confirm('<?php echo $text_warning_private_key_exists; ?>')) {
-                return false;
-            }
-            data = {
-                'action': 'trustly_generate_rsa_key'
-            };
-        } else {
-            data = {
-                'action': 'trustly_generate_rsa_public_key',
-                'private_key': $('#trustly_private_key').val()
-            };
-        }
+		if(this.id.substr(-3) == 'new') {
+			if($('#trustly_private_key').val() != '' && !window.confirm('<?php echo $text_warning_private_key_exists; ?>')) {
+				return false;
+			}
+			data = {
+				'action': 'trustly_generate_rsa_key'
+			};
+		} else {
+			data = {
+				'action': 'trustly_generate_rsa_public_key',
+				'private_key': $('#trustly_private_key').val()
+			};
+		}
 
-        $.post(ajaxurl, data, function(response) {
-            try {
-                response = JSON.parse(response);
-                if(!response.hasOwnProperty('public_key') || response.public_key == null) {
-                    throw 'Missing public_key in response';
-                }
-                $('#trustly_key_public_key').text(response.public_key);
-                if(response.hasOwnProperty('private_key')) {
-                    $('.trustly_key_new_display').show();
-                    $('#trustly_private_key').val(response.private_key);
-                }
-            } catch (e) {
-                alert('<?php echo $text_failed_generate_key; ?>');
-                console.log('Failed to generate key: ' + e);
-            }
-        });
-        ev.preventDefault();
-        return false;
-    });
+		$.post(ajaxurl, data, function(response) {
+			try {
+				response = JSON.parse(response);
+				if(!response.hasOwnProperty('public_key') || response.public_key == null) {
+					throw 'Missing public_key in response';
+				}
+				$('#trustly_key_public_key').text(response.public_key);
+				if(response.hasOwnProperty('private_key')) {
+					$('.trustly_key_new_display').show();
+					$('#trustly_private_key').val(response.private_key);
+				}
+			} catch (e) {
+				alert('<?php echo $text_failed_generate_key; ?>');
+				console.log('Failed to generate key: ' + e);
+			}
+		});
+		ev.preventDefault();
+		return false;
+	});
 
 	//--></script>
 <?php echo $footer ?>
