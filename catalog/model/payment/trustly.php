@@ -147,12 +147,12 @@ class ModelPaymentTrustly extends Model
      */
     public function addTrustlyNotification($notification_id, $trustly_order_id, $method, $amount, $currency, $date)
 	{
-        $query = sprintf('INSERT INTO `' . DB_PREFIX . 'trustly_notifications` (notification_id, trustly_order_id, method, amount, currency, date) VALUES (%d, %d, "%s", %f, "%s", "%s");',
+        $query = sprintf('INSERT INTO `' . DB_PREFIX . 'trustly_notifications` (notification_id, trustly_order_id, method, amount, currency, date) VALUES (%d, %d, "%s", %s, %s, "%s");',
             $this->db->escape($notification_id),
             $this->db->escape($trustly_order_id),
             $this->db->escape($method),
-            $this->db->escape((float)$amount),
-            $this->db->escape($currency),
+            $this->nullFloat($amount),
+            $this->nullStr($currency),
             $this->db->escape($date)
         );
 
@@ -180,5 +180,33 @@ class ModelPaymentTrustly extends Model
         }
 
         return $notifications->rows;
-    }
+	}
+
+    /**
+     * Return either a NULL value if the value is not set or not numerical or the value in float form. Suitable as db operations with %s format in printf.
+     * @param $v
+	 * @return string/float
+     */
+	protected function nullFloat($v) {
+		if (is_null($v)) {
+			return 'NULL';
+		} elseif (is_numeric($v)) {
+			return (float)$v;
+		} else {
+			return 'NULL';
+		}
+	}
+
+    /**
+     * Return either a NULL value if the value is not set or the value in a suitable form for database operations. Suitable as db operations with %s format in printf.
+     * @param $v
+	 * @return string
+     */
+	protected function nullStr($v) {
+		if (is_null($v)) {
+			return 'NULL';
+		} else {
+			return '"' . $this->db->escape($v) . '"';
+		}
+	}
 }
