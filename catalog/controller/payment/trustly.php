@@ -407,14 +407,14 @@ class ControllerPaymentTrustly extends Controller
                 break;
             case 'credit':
                 // Validate amount
-                //$order_amount = $this->currency->format($order['total'], $order['currency_code'], $order['currency_value'], false);
-                if (bccomp($order['total'], $payment_amount, 2) !== 0 || $this->config->get('config_currency') !== $payment_currency) {
+                $order_amount = $this->currency->format($order['total'], $order['currency_code'], $order['currency_value'], false);
+                if (bccomp($order_amount, $payment_amount, 2) !== 0 || $order['currency_code'] !== $payment_currency) {
                     $notification_message = sprintf($this->language->get('error_message_payment_amount_invalid'),
                         $payment_date,
                         $payment_amount,
                         $payment_currency,
-                        $order['total'],
-                        $this->config->get('config_currency')
+                        $order_amount,
+                        $order['currency_code']
                     );
 
                     // Add Order History
@@ -499,14 +499,12 @@ class ControllerPaymentTrustly extends Controller
         }
 
         if (!$amount) {
-            //$amount = $this->currency->format($order['total'], $order['currency_code'], $order['currency_value'], false);
-            $amount = $order['total'];
+            $amount = $this->currency->format($order['total'], $order['currency_code'], $order['currency_value'], false);
         }
 
         // Get all the data needed to process the payment
         $locale = $this->getLocale($this->language->get('code'));
-        //$currency = $order['currency_code'];
-        $currency = $this->config->get('config_currency');
+        $currency = $order['currency_code'];
         $country = $order['payment_iso_code_2'];
         $client_ip = $order['ip'];
         $phone = $order['telephone'];
