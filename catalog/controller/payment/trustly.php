@@ -383,11 +383,12 @@ class ControllerPaymentTrustly extends Controller
 
 
         switch ($notification_method) {
-        case 'pending':
-            if (in_array($notification_method, $methods)) {
-                $this->addLog('Incoming pending notification, but Order #' . $order_id . ' already pending.');
-                break;
-            }
+            case 'pending':
+                if (in_array($notification_method, $methods)) {
+                    $this->addLog('Incoming pending notification, but Order #' . $order_id . ' already pending.');
+                    break;
+                }
+
                 if (in_array('credit', $methods)) {
                     $this->addLog('Incoming pending notification, but Order #' . $order_id . ' already credited.');
                     break;
