@@ -129,7 +129,7 @@ class ControllerPaymentTrustly extends Controller
                     }
 
                     // Refund
-                    $amount = $this->request->post['amount'];
+                    $amount = number_format($this->request->post['amount'], 2, '.', '');
                     $currency = $this->request->post['currency'];
 
                     $response = $this->getAPI()->refund($trustly_order_id, $amount, $currency);

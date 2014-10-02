@@ -279,14 +279,17 @@
 	// Refund Action
 	$('.refund_button').on('click', function () {
 		var total_refunded = prompt('Enter refund amount:', '0');
-			//Always use the dot as decimal separator
-		if(total_refunded.indexOf('.') == -1 && total_refunded.indexOf(',') > 0) {
-			total_refunded = total_refunded.replace(/,/g, '.');
-		}
+        if(total_refunded != null) {
+                //Always use the dot as decimal separator
+            if(total_refunded.indexOf('.') == -1 && total_refunded.indexOf(',') > 0) {
+                total_refunded = total_refunded.replace(/,/g, '.');
+            }
 
-		if (parseInt(total_refunded) > 0) {
-			call_refund(this, total_refunded);
-		}
+            refunded = parseFloat(total_refunded);
+            if (isFinite(refunded) && refunded > 0) {
+                call_refund(this, refunded);
+            }
+        }
 	});
 
 	function call_refund(el, amount) {
