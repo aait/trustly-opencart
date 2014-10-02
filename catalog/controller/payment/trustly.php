@@ -808,7 +808,7 @@ class ControllerPaymentTrustly extends Controller
     {
         $allowedLangs = array(
             'en' => 'en_US',
-            'sv' => 'sv_SE',
+            'se' => 'sv_SE',
             'nb' => 'nb_NO',
             'da' => 'da_DK',
             'es' => 'es_ES',
