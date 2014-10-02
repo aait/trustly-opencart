@@ -352,12 +352,20 @@ class ControllerPaymentTrustly extends Controller
             exit();
         }
 
+        $lock_id = $this->model_payment_trustly->lockOrderForProcessing($order_id);
+        if($lock_id === false) {
+            $this->addLog('Can\'t lock order ' . $order_id . ' for processing, aborting');
+            exit();
+        }
+
+
         // Get Order Notifications
         $notifications = $this->model_payment_trustly->getTrustlyNotifications($trustly_order_id);
         $methods = array();
         foreach ($notifications as $item) {
             // Check Notification is already registered
             if ($item['notification_id'] === $trustly_notification_id) {
+                $this->model_payment_trustly->unlockOrderAfterProcessing($order_id, $lock_id);
                 // Show Notification Response
                 $response = $this->getAPI()->notificationResponse($notification, true);
                 $response_json = $response->json();
@@ -478,6 +486,7 @@ class ControllerPaymentTrustly extends Controller
             $payment_date
         );
 
+        $this->model_payment_trustly->unlockOrderAfterProcessing($order_id, $lock_id);
         // Show Notification Response
         $response = $this->getAPI()->notificationResponse($notification, true);
         $response_json = $response->json();

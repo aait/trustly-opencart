@@ -187,6 +187,67 @@ class ModelPaymentTrustly extends Model
     }
 
     /**
+     * Place a (max) 1 minute lock on the order in terms of processing from 
+     * trustly. Use this lock to prevent concurrent order updates on this order.
+     *
+     * @param integer $orderid Opencart orderid for the order to lock
+     * @return FALSE/lockid Save the lockid for late lock release. Boolean false means we failed to acquire a lock of the order.
+     */
+    public function lockOrderForProcessing($order_id) {
+
+        $lock_id = mt_rand(0, 2147483647);
+        $query = sprintf('UPDATE `' . DB_PREFIX . 'trustly_orders` SET lock_id=%d, lock_timestamp=NOW() WHERE order_id=%d AND (lock_timestamp IS NULL OR lock_timestamp < NOW() - INTERVAL 1 minute);',
+            $this->db->escape($lock_id),
+            $this->db->escape($order_id)
+        );
+
+        try {
+            $this->db->query($query);
+        } catch (Exception $e) {
+            $this->addLog('Failed to execute query: ' . $query . ': ' . $e->getMessage());
+            return false;
+        }
+
+        $query = sprintf('SELECT lock_id FROM `' . DB_PREFIX . 'trustly_orders` WHERE order_id=%d;',
+            $order_id);
+        $lock_rows = $this->db->query($query);
+        if ($lock_rows->num_rows === 0) {
+            $this->addLog('Cannot find lock when reading back order');
+            return false;
+        }
+        $lock_row = array_shift($lock_rows->rows);
+        $verify_lockid = $lock_row['lock_id'];
+
+
+        if($verify_lockid == $lock_id) {
+            return $lock_id;
+        }
+        return false;
+    }
+
+    /**
+     * Release a previously acquired lock on the order and allow others to process it.
+     *
+     * @param integer $order_id Opencart order_id for the order to release lock for
+     * @param integer $lock_id Lock identifier. Should have been acquired via
+     * lockOrderForProcessing() before
+     * @return boolean Revealing wether we held the lock in the first place.
+     */
+    public function unlockOrderAfterProcessing($order_id, $lock_id) {
+        $query = sprintf(
+            'UPDATE `' . DB_PREFIX . 'trustly_orders` SET lock_id=NULL , lock_timestamp=NULL WHERE order_id=%d AND lock_id=%d',
+            $this->db->escape($order_id),
+            $this->db->escape($lock_id)
+        );
+
+        try {
+            return $this->db->query($query);
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
+    /**
      * Return either a NULL value if the value is not set or not numerical or the value in float form. Suitable as db operations with %s format in printf.
      * @param $v
      * @return string/float
@@ -231,5 +292,15 @@ class ModelPaymentTrustly extends Model
             }
         }
         return NULL;
+    }
+
+    /**
+     * Add message to Log
+     * @param $message
+     */
+    protected function addLog($message)
+    {
+        $log = new Log('trustly.log');
+        $log->write($message);
     }
 }
