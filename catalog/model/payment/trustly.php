@@ -49,9 +49,9 @@ class ModelPaymentTrustly extends Model
      */
     public function addTrustlyOrder($order_id, $trustly_order_id, $url)
     {
-        $query = sprintf('INSERT INTO `' . DB_PREFIX . 'trustly_orders` (order_id, trustly_order_id, url) VALUES (%d, %d, "%s");',
+        $query = sprintf('INSERT INTO `' . DB_PREFIX . 'trustly_orders` (order_id, trustly_order_id, url) VALUES (%d, "%s", "%s");',
             $this->db->escape((int)$order_id),
-            $this->db->escape($trustly_order_id),
+            $this->trustlyID($trustly_order_id),
             $this->db->escape($url)
         );
 
@@ -98,7 +98,7 @@ class ModelPaymentTrustly extends Model
         }
 
         $order = array_shift($orders->rows);
-        return (int)$order['trustly_order_id'];
+        return $order['trustly_order_id'];
     }
 
     /**
@@ -108,8 +108,8 @@ class ModelPaymentTrustly extends Model
      */
     public function getOrderIdByTrustlyOrderId($trustly_order_id)
     {
-        $query = sprintf("SELECT order_id FROM " . DB_PREFIX . "trustly_orders WHERE trustly_order_id=%d;",
-            $this->db->escape((int)$trustly_order_id)
+        $query = sprintf('SELECT order_id FROM ' . DB_PREFIX . 'trustly_orders WHERE trustly_order_id="%s";',
+            $this->trustlyID($trustly_order_id)
         );
 
         $orders = $this->db->query($query);
@@ -128,8 +128,8 @@ class ModelPaymentTrustly extends Model
      */
     public function removeTrustlyOrder($trustly_order_id)
     {
-        $query = sprintf("DELETE FROM " . DB_PREFIX . "trustly_orders WHERE trustly_order_id=%d;",
-            $this->db->escape((int)$trustly_order_id)
+        $query = sprintf('DELETE FROM ' . DB_PREFIX . 'trustly_orders WHERE trustly_order_id="%s";',
+            $this->trustlyID($trustly_order_id)
         );
 
         return $this->db->query($query);
@@ -146,10 +146,10 @@ class ModelPaymentTrustly extends Model
      * @return bool
      */
     public function addTrustlyNotification($notification_id, $trustly_order_id, $method, $amount, $currency, $date)
-	{
-        $query = sprintf('INSERT INTO `' . DB_PREFIX . 'trustly_notifications` (notification_id, trustly_order_id, method, amount, currency, date) VALUES (%d, %d, "%s", %s, %s, "%s");',
-            $this->db->escape($notification_id),
-            $this->db->escape($trustly_order_id),
+    {
+        $query = sprintf('INSERT INTO `' . DB_PREFIX . 'trustly_notifications` (notification_id, trustly_order_id, method, amount, currency, date) VALUES ("%s", "%s", "%s", %s, %s, "%s");',
+            $this->trustlyID($notification_id),
+            $this->trustlyID($trustly_order_id),
             $this->db->escape($method),
             $this->nullFloat($amount),
             $this->nullStr($currency),
@@ -170,8 +170,8 @@ class ModelPaymentTrustly extends Model
      */
     public function getTrustlyNotifications($trustly_order_id)
     {
-        $query = sprintf("SELECT * FROM " . DB_PREFIX . "trustly_notifications WHERE trustly_order_id=%d;",
-            $this->db->escape((int)$trustly_order_id)
+        $query = sprintf('SELECT * FROM ' . DB_PREFIX . 'trustly_notifications WHERE trustly_order_id="%s";',
+            $this->trustlyID($trustly_order_id)
         );
 
         $notifications = $this->db->query($query);
@@ -215,4 +215,17 @@ class ModelPaymentTrustly extends Model
      * @param $id
      * @return string/NULL
      */
+    protected function trustlyID($id) {
+        if($id === NULL) {
+            return NULL;
+        }
+        $id = (string)$id;
+        if(ctype_digit($id)) {
+            $len = strlen($id);
+            if($len > 5 && $len < 19) {
+                return $id;
+            }
+        }
+        return NULL;
+    }
 }
