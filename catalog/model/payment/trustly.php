@@ -180,33 +180,39 @@ class ModelPaymentTrustly extends Model
         }
 
         return $notifications->rows;
-	}
+    }
 
     /**
      * Return either a NULL value if the value is not set or not numerical or the value in float form. Suitable as db operations with %s format in printf.
      * @param $v
-	 * @return string/float
+     * @return string/float
      */
-	protected function nullFloat($v) {
-		if (is_null($v)) {
-			return 'NULL';
-		} elseif (is_numeric($v)) {
-			return (float)$v;
-		} else {
-			return 'NULL';
-		}
-	}
+    protected function nullFloat($v) {
+        if (is_null($v)) {
+            return 'NULL';
+        } elseif (is_numeric($v)) {
+            return (float)$v;
+        } else {
+            return 'NULL';
+        }
+    }
 
     /**
      * Return either a NULL value if the value is not set or the value in a suitable form for database operations. Suitable as db operations with %s format in printf.
      * @param $v
-	 * @return string
+     * @return string
      */
-	protected function nullStr($v) {
-		if (is_null($v)) {
-			return 'NULL';
-		} else {
-			return '"' . $this->db->escape($v) . '"';
-		}
-	}
+    protected function nullStr($v) {
+        if (is_null($v)) {
+            return 'NULL';
+        } else {
+            return '"' . $this->db->escape($v) . '"';
+        }
+    }
+
+    /**
+     * Check if the input parameter is a representation of a trustly ID, if so return the string, otherwise return NULL
+     * @param $id
+     * @return string/NULL
+     */
 }
