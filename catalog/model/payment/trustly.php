@@ -15,7 +15,11 @@ class ModelPaymentTrustly extends Model
     {
         $this->load->language('payment/trustly');
 
-        $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "zone_to_geo_zone WHERE geo_zone_id = '" . (int)$this->config->get('trustly_geo_zone_id') . "' AND country_id = '" . (int)$address['country_id'] . "' AND (zone_id = '" . (int)$address['zone_id'] . "' OR zone_id = '0')");
+        $query = $this->db->query(sprintf('SELECT * FROM `' . DB_PREFIX . 'zone_to_geo_zone` WHERE geo_zone_id = %d AND country_id = %d AND (zone_id = %s OR zone_id = 0)',
+            $this->db->escape((int)$this->config->get('trustly_geo_zone_id')),
+            $this->db->escape((int)$address['country_id']),
+            $this->db->escape((int)$address['zone_id'])
+        ));
 
         if ($this->config->get('trustly_total') > $total) {
             $status = false;
@@ -69,7 +73,7 @@ class ModelPaymentTrustly extends Model
      */
     public function getTrustlyOrder($order_id)
     {
-        $query = sprintf("SELECT * FROM " . DB_PREFIX . "trustly_orders WHERE order_id=%d;",
+        $query = sprintf('SELECT * FROM `' . DB_PREFIX . 'trustly_orders` WHERE order_id=%d;',
             $this->db->escape((int)$order_id)
         );
 
@@ -88,7 +92,7 @@ class ModelPaymentTrustly extends Model
      */
     public function getTrustlyOrderId($order_id)
     {
-        $query = sprintf("SELECT trustly_order_id FROM " . DB_PREFIX . "trustly_orders WHERE order_id=%d;",
+        $query = sprintf('SELECT trustly_order_id FROM `' . DB_PREFIX . 'trustly_orders` WHERE order_id=%d;',
             $this->db->escape((int)$order_id)
         );
 
@@ -108,7 +112,7 @@ class ModelPaymentTrustly extends Model
      */
     public function getOrderIdByTrustlyOrderId($trustly_order_id)
     {
-        $query = sprintf('SELECT order_id FROM ' . DB_PREFIX . 'trustly_orders WHERE trustly_order_id="%s";',
+        $query = sprintf('SELECT order_id FROM `' . DB_PREFIX . 'trustly_orders` WHERE trustly_order_id="%s";',
             $this->trustlyID($trustly_order_id)
         );
 
@@ -128,7 +132,7 @@ class ModelPaymentTrustly extends Model
      */
     public function removeTrustlyOrder($trustly_order_id)
     {
-        $query = sprintf('DELETE FROM ' . DB_PREFIX . 'trustly_orders WHERE trustly_order_id="%s";',
+        $query = sprintf('DELETE FROM `' . DB_PREFIX . 'trustly_orders` WHERE trustly_order_id="%s";',
             $this->trustlyID($trustly_order_id)
         );
 
@@ -170,7 +174,7 @@ class ModelPaymentTrustly extends Model
      */
     public function getTrustlyNotifications($trustly_order_id)
     {
-        $query = sprintf('SELECT * FROM ' . DB_PREFIX . 'trustly_notifications WHERE trustly_order_id="%s";',
+        $query = sprintf('SELECT * FROM `' . DB_PREFIX . 'trustly_notifications` WHERE trustly_order_id="%s";',
             $this->trustlyID($trustly_order_id)
         );
 
