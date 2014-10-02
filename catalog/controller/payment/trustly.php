@@ -462,7 +462,7 @@ class ControllerPaymentTrustly extends Controller
                     break;
                 }
 
-                $notification_message = sprintf($this->config->get('text_message_payment_canceled'),
+                $notification_message = sprintf($this->language->get('text_message_payment_canceled'),
                     $payment_date
                 );
 
