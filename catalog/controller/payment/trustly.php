@@ -528,9 +528,10 @@ class ControllerPaymentTrustly extends Controller
 
         // Mixing POST and GET data is not supported so the NotificationURL must not contain a ? ("question mark")
         // Use wrapper to solve this problem
-        $notification_url = $this->url->link('payment/' . $this->_module_name . '/notification', '', 'SSL');
+        //
+        $notification_url = $this->url->link('payment/' . $this->_module_name . '/notification', '', ($this->config->get('trustly_notify_http') ? 'NONSSL' : 'SSL'));
         if (mb_strpos($notification_url, '?') !== false) {
-            $notification_url = HTTPS_SERVER . 'trustly-notification.php';
+            $notification_url = ($this->config->get('trustly_notify_http') ? HTTP_SERVER : HTTPS_SERVER) . 'trustly-notification.php';
         }
 
         $failed_url = $this->url->link('payment/' . $this->_module_name . '/failed', '', 'SSL');
