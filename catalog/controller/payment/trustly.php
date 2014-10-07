@@ -398,6 +398,11 @@ class ControllerPaymentTrustly extends Controller
                     break;
                 }
 
+                if (in_array('cancel', $methods)) {
+                    $this->model_payment_trustly->addLog('Incoming pending notification, but Order #' . $order_id . ' has been canceled.');
+                    break;
+                }
+
                 $notification_message = sprintf($this->language->get('text_message_payment_pending'),
                     $payment_amount,
                     $payment_currency,
@@ -410,6 +415,11 @@ class ControllerPaymentTrustly extends Controller
                 $this->model_payment_trustly->addLog('Updated order status to ' . $this->config->get('trustly_pending_status_id') . ' for order #' . $order_id);
                 break;
             case 'credit':
+                if (in_array('cancel', $methods)) {
+                    $this->model_payment_trustly->addLog('Incoming credit notification, but Order #' . $order_id . ' has been canceled.');
+                    break;
+                }
+
                 // Validate amount
                 $order_amount = $this->currency->format($order['total'], $order['currency_code'], $order['currency_value'], false);
                 if (bccomp($order_amount, $payment_amount, 2) !== 0 || $order['currency_code'] !== $payment_currency) {
@@ -439,6 +449,11 @@ class ControllerPaymentTrustly extends Controller
                 $this->model_payment_trustly->addLog('Updated order status to ' . $this->config->get('trustly_completed_status_id') . ' for order #' . $order_id);
                 break;
             case 'debit':
+                if (in_array('cancel', $methods)) {
+                    $this->model_payment_trustly->addLog('Incoming debit notification, but Order #' . $order_id . ' has been canceled.');
+                    break;
+                }
+
                 $notification_message = sprintf($this->language->get('text_message_payment_debited'),
                     $payment_amount,
                     $payment_currency,
