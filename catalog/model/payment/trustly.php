@@ -298,7 +298,7 @@ class ModelPaymentTrustly extends Model
      * Add message to Log
      * @param $message
      */
-    protected function addLog($message)
+    public function addLog($message)
     {
         $log = new Log('trustly.log');
         $log->write($message);

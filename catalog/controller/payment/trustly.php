@@ -46,9 +46,9 @@ class ControllerPaymentTrustly extends Controller
             } else {
                 $error = $this->language->get('error_order_create');
                 if($response === FALSE) {
-                    $this->addLog('Failed to create the Trustly order');
+                    $this->model_payment_trustly->addLog('Failed to create the Trustly order');
                 } else {
-                    $this->addLog('Failed to create the Trustly order: ' . $response->getErrorCode() . ' - ' . $response->getErrorMessage());
+                    $this->model_payment_trustly->addLog('Failed to create the Trustly order: ' . $response->getErrorCode() . ' - ' . $response->getErrorMessage());
                     $error = $response->getErrorMessage() . ' (' . $response->getErrorCode() . ')';
                 }
 
@@ -314,7 +314,7 @@ class ControllerPaymentTrustly extends Controller
         }
 
         if (empty($http_raw_post_data)) {
-            $this->addLog('Received empty post data.');
+            $this->model_payment_trustly->addLog('Received empty post data.');
             exit();
         }
 
@@ -322,18 +322,18 @@ class ControllerPaymentTrustly extends Controller
             $notification = $this->getAPI()->handleNotification($http_raw_post_data);
         } catch(Trustly_SignatureException $e) {
             // Invalid signature, respond with failure
-            $this->addLog(sprintf('Incoming message from Trustly with the wrong signature?! %s', $e->getMessage()));
+            $this->model_payment_trustly->addLog(sprintf('Incoming message from Trustly with the wrong signature?! %s', $e->getMessage()));
             exit();
         } catch(Trustly_JSONRPCVersionException $e) {
             // This will likely be the cause when the notification was not
             // really a valid json rpc call at all, just ignore it.
-            $this->addLog(sprintf('Incoming message from Trustly with the wrong jsonrpc version?! %s', $e->getMessage()));
+            $this->model_payment_trustly->addLog(sprintf('Incoming message from Trustly with the wrong jsonrpc version?! %s', $e->getMessage()));
             exit();
         }
 
         $notification_method = $notification->getMethod();
         if (empty($notification_method)) {
-            $this->addLog('Notification don\'t have method.');
+            $this->model_payment_trustly->addLog('Notification don\'t have method.');
             exit();
         }
 
@@ -341,19 +341,19 @@ class ControllerPaymentTrustly extends Controller
         $trustly_notification_id = $notification->getData('notificationid');
         $order_id = $this->model_payment_trustly->getOrderIdByTrustlyOrderId($trustly_order_id);
         if (!$order_id) {
-            $this->addLog('Can\'t to get original Order Id by Trustly Order Id: ' . $trustly_order_id);
+            $this->model_payment_trustly->addLog('Can\'t to get original Order Id by Trustly Order Id: ' . $trustly_order_id);
             exit();
         }
 
         $order = $this->model_checkout_order->getOrder($order_id);
         if (!$order) {
-            $this->addLog('Can\'t load order Id: ' . $order_id);
+            $this->model_payment_trustly->addLog('Can\'t load order Id: ' . $order_id);
             exit();
         }
 
         $lock_id = $this->model_payment_trustly->lockOrderForProcessing($order_id);
         if($lock_id === false) {
-            $this->addLog('Can\'t lock order ' . $order_id . ' for processing, aborting');
+            $this->model_payment_trustly->addLog('Can\'t lock order ' . $order_id . ' for processing, aborting');
             exit();
         }
 
@@ -382,19 +382,19 @@ class ControllerPaymentTrustly extends Controller
             $payment_date = date('Y-m-d H:i:s');
         }
 
-        $this->addLog(sprintf('Notification Id: %s, Notification method: %s, Order Id: %s, Trustly Order Id: %s, Payment amount: %s %s',
+        $this->model_payment_trustly->addLog(sprintf('Notification Id: %s, Notification method: %s, Order Id: %s, Trustly Order Id: %s, Payment amount: %s %s',
             $trustly_notification_id, $notification_method, $order_id, $trustly_order_id, $payment_amount, $payment_currency));
 
 
         switch ($notification_method) {
             case 'pending':
                 if (in_array($notification_method, $methods)) {
-                    $this->addLog('Incoming pending notification, but Order #' . $order_id . ' already pending.');
+                    $this->model_payment_trustly->addLog('Incoming pending notification, but Order #' . $order_id . ' already pending.');
                     break;
                 }
 
                 if (in_array('credit', $methods)) {
-                    $this->addLog('Incoming pending notification, but Order #' . $order_id . ' already credited.');
+                    $this->model_payment_trustly->addLog('Incoming pending notification, but Order #' . $order_id . ' already credited.');
                     break;
                 }
 
@@ -407,7 +407,7 @@ class ControllerPaymentTrustly extends Controller
 
                 // Set Order status
                 $this->model_payment_trustly->setOrderStatus($order_id, $this->config->get('trustly_pending_status_id'), $notification_message, true);
-                $this->addLog('Updated order status to ' . $this->config->get('trustly_pending_status_id') . ' for order #' . $order_id);
+                $this->model_payment_trustly->addLog('Updated order status to ' . $this->config->get('trustly_pending_status_id') . ' for order #' . $order_id);
                 break;
             case 'credit':
                 // Validate amount
@@ -436,7 +436,7 @@ class ControllerPaymentTrustly extends Controller
                 $this->db->query("UPDATE `" . DB_PREFIX . "order` SET order_status_id = '0', date_modified = NOW() WHERE order_id = '" . (int)$order_id . "'");
                 $this->model_checkout_order->confirm($order_id, $this->config->get('trustly_completed_status_id'), $notification_message, true);
                 $this->db->query("UPDATE `" . DB_PREFIX . "order` SET order_status_id = '" . (int)$this->config->get('trustly_completed_status_id') . "', date_modified = NOW() WHERE order_id = '" . (int)$order_id . "'");
-                $this->addLog('Updated order status to ' . $this->config->get('trustly_completed_status_id') . ' for order #' . $order_id);
+                $this->model_payment_trustly->addLog('Updated order status to ' . $this->config->get('trustly_completed_status_id') . ' for order #' . $order_id);
                 break;
             case 'debit':
                 $notification_message = sprintf($this->language->get('text_message_payment_debited'),
@@ -447,11 +447,11 @@ class ControllerPaymentTrustly extends Controller
 
                 // Set Order status
                 $this->model_payment_trustly->setOrderStatus($order_id, $this->config->get('trustly_refunded_status_id'), $notification_message, true);
-                $this->addLog('Updated order status to ' .  $this->config->get('trustly_refunded_status_id') . ' for order #' . $order_id);
+                $this->model_payment_trustly->addLog('Updated order status to ' .  $this->config->get('trustly_refunded_status_id') . ' for order #' . $order_id);
                 break;
             case 'cancel':
                 if (in_array($notification_method, $methods)) {
-                    $this->addLog('Order #' . $order_id . ' already canceled.');
+                    $this->model_payment_trustly->addLog('Order #' . $order_id . ' already canceled.');
                     break;
                 }
 
@@ -461,10 +461,10 @@ class ControllerPaymentTrustly extends Controller
 
                 // Set Order status
                 $this->model_payment_trustly->setOrderStatus($order_id, $this->config->get('trustly_canceled_status_id'), $notification_message, true);
-                $this->addLog('Updated order status to ' . $this->config->get('trustly_canceled_status_id') . ' for order #' . $order_id);
+                $this->model_payment_trustly->addLog('Updated order status to ' . $this->config->get('trustly_canceled_status_id') . ' for order #' . $order_id);
                 break;
             default:
-                $this->addLog('Not processing ' . $notification_method . ' notification for order #' . $order_id);
+                $this->model_payment_trustly->addLog('Not processing ' . $notification_method . ' notification for order #' . $order_id);
                 break;
         }
 
@@ -495,6 +495,7 @@ class ControllerPaymentTrustly extends Controller
     protected function retrievePaymentUrl($order_id, $amount = null)
     {
         $this->load->model('checkout/order');
+        $this->load->model('payment/trustly');
 
         $order = $this->model_checkout_order->getOrder($order_id);
         if (!$order) {
@@ -555,24 +556,14 @@ class ControllerPaymentTrustly extends Controller
 
             return $response;
         } catch (Trustly_ConnectionException $e) {
-            $this->addLog('Deposit call failed with Trustly_ConnectionException: ' .  $e->getMessage());
+            $this->model_payment_trustly->addLog('Deposit call failed with Trustly_ConnectionException: ' .  $e->getMessage());
         } catch (Trustly_DataException $e) {
-            $this->addLog('Deposit call failed with Trustly_DataException: ' .  $e->getMessage());
+            $this->model_payment_trustly->addLog('Deposit call failed with Trustly_DataException: ' .  $e->getMessage());
         } catch (Exception $e) {
-            $this->addLog('Deposit call failed with Error: ' .  $e->getMessage());
+            $this->model_payment_trustly->addLog('Deposit call failed with Error: ' .  $e->getMessage());
         }
 
         return false;
-    }
-
-    /**
-     * Add message to Log
-     * @param $message
-     */
-    protected function addLog($message)
-    {
-        $log = new Log('trustly.log');
-        $log->write($message);
     }
 
     /**
