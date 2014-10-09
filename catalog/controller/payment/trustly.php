@@ -442,21 +442,33 @@ class ControllerPaymentTrustly extends Controller
                     );
 
                     // Add Order History
-                    $this->db->query("INSERT INTO " . DB_PREFIX . "order_history SET order_id = '" . (int)$order_id . "', order_status_id = '" . (int)$this->config->get('trustly_pending_status_id') . "', notify = '0', comment = '" . $this->db->escape($notification_message) . "', date_added = NOW()");
+                    $this->db->query("UPDATE `" . DB_PREFIX . "order` SET order_status_id = '0', date_modified = NOW() WHERE order_id = '" . (int)$order_id . "'");
+                    $this->db->query("INSERT INTO " . DB_PREFIX . "order_history SET order_id = '" . (int)$order_id . "', order_status_id = '" . (int)$this->config->get('trustly_failed_status_id') . "', notify = '0', comment = '" . $this->db->escape($notification_message) . "', date_added = NOW()");
+
+                    $this->db->query("UPDATE `" . DB_PREFIX . "order` SET order_status_id = '" . (int)$this->config->get('trustly_failed_status_id') . "', date_modified = NOW() WHERE order_id = '" . (int)$order_id . "'");
+                    $this->model_payment_trustly->addLog(sprintf('Incoming payment with wrong amount/currency, is %s %s, expected %s %s. Setting order status to %s for order #%s',
+                        $payment_amount,
+                        $payment_currency,
+                        $order_amount,
+                        $order['currency_code'],
+                        $this->config->get('trustly_completed_status_id'),
+                        $order_id
+                    ));
+                } else {
+
+                    $notification_message = sprintf($this->language->get('text_message_payment_credited'),
+                        $payment_amount,
+                        $payment_currency,
+                        $payment_date,
+                        $trustly_order_id
+                    );
+
+                    // Confirm Order
+                    $this->db->query("UPDATE `" . DB_PREFIX . "order` SET order_status_id = '0', date_modified = NOW() WHERE order_id = '" . (int)$order_id . "'");
+                    $this->model_checkout_order->confirm($order_id, $this->config->get('trustly_completed_status_id'), $notification_message, true);
+                    $this->db->query("UPDATE `" . DB_PREFIX . "order` SET order_status_id = '" . (int)$this->config->get('trustly_completed_status_id') . "', date_modified = NOW() WHERE order_id = '" . (int)$order_id . "'");
+                    $this->model_payment_trustly->addLog('Updated order status to ' . $this->config->get('trustly_completed_status_id') . ' for order #' . $order_id);
                 }
-
-                $notification_message = sprintf($this->language->get('text_message_payment_credited'),
-                    $payment_amount,
-                    $payment_currency,
-                    $payment_date,
-                    $trustly_order_id
-                );
-
-                // Confirm Order
-                $this->db->query("UPDATE `" . DB_PREFIX . "order` SET order_status_id = '0', date_modified = NOW() WHERE order_id = '" . (int)$order_id . "'");
-                $this->model_checkout_order->confirm($order_id, $this->config->get('trustly_completed_status_id'), $notification_message, true);
-                $this->db->query("UPDATE `" . DB_PREFIX . "order` SET order_status_id = '" . (int)$this->config->get('trustly_completed_status_id') . "', date_modified = NOW() WHERE order_id = '" . (int)$order_id . "'");
-                $this->model_payment_trustly->addLog('Updated order status to ' . $this->config->get('trustly_completed_status_id') . ' for order #' . $order_id);
                 break;
             case 'debit':
                 if (in_array('cancel', $methods)) {
@@ -546,7 +558,6 @@ class ControllerPaymentTrustly extends Controller
 
         // Mixing POST and GET data is not supported so the NotificationURL must not contain a ? ("question mark")
         // Use wrapper to solve this problem
-        //
         $notification_url = $this->url->link('payment/' . $this->_module_name . '/notification', '', ($this->config->get('trustly_notify_http') ? 'NONSSL' : 'SSL'));
         if (mb_strpos($notification_url, '?') !== false) {
             $notification_url = ($this->config->get('trustly_notify_http') ? HTTP_SERVER : HTTPS_SERVER) . 'trustly-notification.php';
