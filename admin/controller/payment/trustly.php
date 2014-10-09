@@ -323,7 +323,7 @@ class ControllerPaymentTrustly extends Controller
             return false;
         }
 
-        return (count($this->error) === 0);
+        return true;
     }
 
     /**
