@@ -96,6 +96,7 @@ class ControllerPaymentTrustly extends Controller
 
         // Waiting to receive notifications
         $notifications = array();
+        $notification_methods = array();
         $trustly_order_id = $this->model_payment_trustly->getTrustlyOrderId($order_id);
         if ($trustly_order_id) {
             for ($i = 0; $i < 60; $i++) {
@@ -104,13 +105,22 @@ class ControllerPaymentTrustly extends Controller
                     // Wait half a second and try again
                     usleep(500000);
                 } else {
+                    foreach ($notifications as $item) {
+                        $notification_methods[] = $item['method'];
+                    }
+
                     break;
                 }
             }
         }
 
+        $ok = false;
+        if (in_array('credit', $methods) || in_array('pending', $methods)) {
+            $ok = true;
+        }
+
         // Set Pending status
-        if (count($notifications) === 0) {
+        if ($ok == false) {
             $this->model_payment_trustly->setOrderStatus($order_id, $this->config->get('trustly_pending_status_id'), $this->language->get('text_message_payment_pending_notification'), true);
         }
 
