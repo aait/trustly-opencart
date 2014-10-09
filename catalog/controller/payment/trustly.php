@@ -357,13 +357,13 @@ class ControllerPaymentTrustly extends Controller
 
         $order = $this->model_checkout_order->getOrder($order_id);
         if (!$order) {
-            $this->model_payment_trustly->addLog('Can\'t load order Id: ' . $order_id);
+            $this->model_payment_trustly->addLog('Can\'t load order #' . $order_id);
             exit();
         }
 
         $lock_id = $this->model_payment_trustly->lockOrderForProcessing($order_id);
         if($lock_id === false) {
-            $this->model_payment_trustly->addLog('Can\'t lock order ' . $order_id . ' for processing, aborting');
+            $this->model_payment_trustly->addLog('Can\'t lock order #' . $order_id . ' for processing, aborting');
             exit();
         }
 
