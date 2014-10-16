@@ -435,13 +435,25 @@ class ControllerPaymentTrustly extends Controller
                         $order['currency_code']
                     );
 
-                    $this->model_payment_trustly->setOrderStatus($order_id, $this->config->get('trustly_failed_status_id'), $notification_message, true);
+                    //$this->model_payment_trustly->setOrderStatus($order_id, $this->config->get('trustly_failed_status_id'), $notification_message, true);
+                    //$this->model_payment_trustly->addLog(sprintf('Incoming payment with wrong amount/currency, is %s %s, expected %s %s. Setting order status to %s for order #%s',
+                    //    $payment_amount,
+                    //    $payment_currency,
+                    //    $order_amount,
+                    //    $order['currency_code'],
+                    //    $this->config->get('trustly_failed_status_id'),
+                    //    $order_id
+                    //));
+                    // Confirm Order
+                    $this->db->query("UPDATE `" . DB_PREFIX . "order` SET order_status_id = '0', date_modified = NOW() WHERE order_id = '" . (int)$order_id . "'");
+                    $this->model_checkout_order->confirm($order_id, $this->config->get('trustly_completed_status_id'), $notification_message, true);
+                    $this->db->query("UPDATE `" . DB_PREFIX . "order` SET order_status_id = '" . (int)$this->config->get('trustly_completed_status_id') . "', date_modified = NOW() WHERE order_id = '" . (int)$order_id . "'");
                     $this->model_payment_trustly->addLog(sprintf('Incoming payment with wrong amount/currency, is %s %s, expected %s %s. Setting order status to %s for order #%s',
                         $payment_amount,
                         $payment_currency,
                         $order_amount,
                         $order['currency_code'],
-                        $this->config->get('trustly_failed_status_id'),
+                        $this->config->get('trustly_completed_status_id'),
                         $order_id
                     ));
                 } else {
