@@ -434,6 +434,7 @@ class ControllerPaymentTrustly extends Controller
                         $order_amount,
                         $order['currency_code']
                     );
+                    $notification_message .= "\n" . $this->language->get('error_wrong_payment_amount');
 
                     $this->model_payment_trustly->setOrderStatus($order_id, $this->config->get('trustly_failed_status_id'), $notification_message, true);
                     $this->model_payment_trustly->addLog(sprintf('Incoming payment with wrong amount/currency, is %s %s, expected %s %s. Setting order status to %s for order #%s',

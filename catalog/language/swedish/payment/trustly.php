@@ -24,3 +24,4 @@ $_['error_payment_failed'] = 'Betalningen misslyckades';
 $_['error_order_create'] = 'Kunde inte starta betalningen';
 $_['error_trustly'] = 'Ett problem har uppstått: %s';
 $_['error_message_payment_amount_invalid'] = 'Betalningen för den här ordern med beloppet %s av %s %s matchar inte totalbeloppet %s %s.';
+$_['error_wrong_payment_amount'] = 'Din betalning kommer att kontrolleras manuellt. Vår kundservice återkommer.';
