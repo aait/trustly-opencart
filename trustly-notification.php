@@ -21,6 +21,7 @@ if (isset($_SERVER['HTTPS']) && (($_SERVER['HTTPS'] === 'on') || ($_SERVER['HTTP
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, $post_url);
 curl_setopt($ch, CURLOPT_POST, 1);
+curl_setopt($ch, CURLOPT_SAFE_UPLOAD, true);
 curl_setopt($ch, CURLOPT_POSTFIELDS, $http_raw_post_data);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
