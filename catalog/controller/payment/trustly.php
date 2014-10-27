@@ -88,7 +88,7 @@ class ControllerPaymentTrustly extends Controller
         $this->load->model('checkout/order');
         $this->load->model('payment/trustly');
 
-        $order_id = $this->session->data['order_id'];
+        $order_id = @$this->session->data['order_id'];
         if (empty($order_id)) {
             $this->session->data['error'] = $this->language->get('error_invalid_order');
             $this->redirect($this->url->link('payment/' . $this->_module_name . '/error', '', 'SSL'));
@@ -130,7 +130,7 @@ class ControllerPaymentTrustly extends Controller
         $this->language->load('payment/trustly');
         $this->load->model('payment/trustly');
 
-        $trustly_order_id = $this->model_payment_trustly->getTrustlyOrderId($this->session->data['order_id']);
+        $trustly_order_id = $this->model_payment_trustly->getTrustlyOrderId(@$this->session->data['order_id']);
         if (!$trustly_order_id) {
             $this->session->data['error'] = $this->language->get('error_invalid_order');
             $this->redirect($this->url->link('payment/' . $this->_module_name . '/error', '', 'SSL'));
