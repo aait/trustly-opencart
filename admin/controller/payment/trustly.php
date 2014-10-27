@@ -417,9 +417,9 @@ class ControllerPaymentTrustly extends Controller
         if ($res->num_rows === 0) {
             $this->db->query("
                 CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "trustly_orders` (
-                    `order_id` int(10) NOT NULL COMMENT 'OpenCart Order Id',
+                    `order_id` int NOT NULL COMMENT 'OpenCart Order Id',
                     `lock_timestamp` timestamp NULL COMMENT 'Timestamp of lock on this order',
-                    `lock_id` int(10) unsigned NULL COMMENT 'Id of lock on this order',
+                    `lock_id` int unsigned NULL COMMENT 'Id of lock on this order',
                     `trustly_order_id` varchar(20) NOT NULL COMMENT 'Trustly Order Id',
                     `url` varchar(255) DEFAULT NULL COMMENT 'Trustly Payment URL',
                     PRIMARY KEY (`order_id`),
