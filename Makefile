@@ -18,7 +18,7 @@ install:
 
 
 .PHONY: clean
-.clean:
+clean:
 	rm -rf "$(BUILDDIR)"
 
 .PHONY: zip
