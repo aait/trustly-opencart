@@ -34,7 +34,7 @@
 <form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data" id="form">
 <div id="tab-settings">
 	<div style="margin-bottom:10px; padding:10px 5px 5px 10px; height: 400px; ">
-		<iframe src="https://trustly.com/opencart" style="width: 100%%; height: 400px; border: 1px solid #D6D6D6;"></iframe>
+		<iframe src="https://trustly.com/opencartsignup" style="width: 100%%; height: 400px; border: 1px solid #D6D6D6;"></iframe>
 	</div>
 	<div class="backoffice">
 		<p><?php echo $text_backoffice_info; ?></p>
