@@ -37,9 +37,9 @@ class ControllerPaymentTrustly extends Controller
         'text_backoffice_info',
         'text_backoffice_link_live',
         'text_backoffice_link_test',
-		'text_orders',
-		'text_edit',
-		'help_total',
+        'text_orders',
+        'text_edit',
+        'help_total',
         'text_username',
         'text_password',
         'text_private_key',
@@ -226,34 +226,34 @@ class ControllerPaymentTrustly extends Controller
         $page = isset($this->request->get['page']) ? (int)$this->request->get['page'] : 1;
         $limit = (int)$this->config->get('config_admin_limit');
 
-		// We build tables etc upon save, so if we have saved data this will be safe to do.
-		if($this->config->get('trustly_username')) {
-			// Get Trustly Orders
-			$query = sprintf("SELECT SQL_CALC_FOUND_ROWS * FROM `" . DB_PREFIX . "trustly_orders` trustly_orders
-				INNER JOIN `" . DB_PREFIX . "trustly_notifications` notifications ON trustly_orders.trustly_order_id = notifications.trustly_order_id
-				INNER JOIN `" . DB_PREFIX . "order` opencart_order ON trustly_orders.order_id = opencart_order.order_id
-				WHERE notifications.method = 'credit'
-				ORDER BY trustly_orders.order_id DESC
-				LIMIT %d OFFSET %d;
-			",
-				$limit,
-				$limit * ($page - 1)
-			);
+        // We build tables etc upon save, so if we have saved data this will be safe to do.
+        if($this->config->get('trustly_username')) {
+            // Get Trustly Orders
+            $query = sprintf("SELECT SQL_CALC_FOUND_ROWS * FROM `" . DB_PREFIX . "trustly_orders` trustly_orders
+                INNER JOIN `" . DB_PREFIX . "trustly_notifications` notifications ON trustly_orders.trustly_order_id = notifications.trustly_order_id
+                INNER JOIN `" . DB_PREFIX . "order` opencart_order ON trustly_orders.order_id = opencart_order.order_id
+                WHERE notifications.method = 'credit'
+                ORDER BY trustly_orders.order_id DESC
+                LIMIT %d OFFSET %d;
+            ",
+                $limit,
+                $limit * ($page - 1)
+            );
 
-			// Prepare Order Totals
-			$orders = $this->db->query($query);
-			foreach ($orders->rows as &$order_info) {
-				$order_info['total'] = $this->currency->format($order_info['total'], $order_info['currency_code'], $order_info['currency_value'], false);
-			}
+            // Prepare Order Totals
+            $orders = $this->db->query($query);
+            foreach ($orders->rows as &$order_info) {
+                $order_info['total'] = $this->currency->format($order_info['total'], $order_info['currency_code'], $order_info['currency_value'], false);
+            }
 
-			$data['orders'] = $orders->rows;
+            $data['orders'] = $orders->rows;
 
-			// Get Total
-			$total = $this->db->query('SELECT FOUND_ROWS() as total;')->row;
-		} else {
-			$total = 0;
-			$data['orders'] = array();
-		}
+            // Get Total
+            $total = $this->db->query('SELECT FOUND_ROWS() as total;')->row;
+        } else {
+            $total = 0;
+            $data['orders'] = array();
+        }
 
         // Pagination
         $pagination = new Pagination();
@@ -264,9 +264,9 @@ class ControllerPaymentTrustly extends Controller
         $pagination->url = $this->url->link('payment/trustly', 'token=' . $this->session->data['token'] . '&page={page}', 'SSL');
         $data['pagination'] = $pagination->render();
 
-		$data['header'] = $this->load->controller('common/header');
-		$data['column_left'] = $this->load->controller('common/column_left');
-		$data['footer'] = $this->load->controller('common/footer');
+        $data['header'] = $this->load->controller('common/header');
+        $data['column_left'] = $this->load->controller('common/column_left');
+        $data['footer'] = $this->load->controller('common/footer');
 
         $this->response->setOutput($this->load->view('payment/trustly.tpl', $data));
     }
