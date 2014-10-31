@@ -16,10 +16,12 @@
     </div>
 
     <div class="container-fluid">
-        <?php foreach ($error as $item) : ?>
-            <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> <?php echo $item; ?>
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
-            </div>
+        <?php foreach ($error as $name => $item) : ?>
+            <?php if(is_numeric($name)) { ?>
+                <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> <?php echo $item; ?>
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                </div>
+            <?php }; ?>
         <?php endforeach; ?>
 
         <div class="panel panel-default">
@@ -51,6 +53,9 @@
                                 <div class="col-sm-10">
                                     <input class="form-control" type="text" name="trustly_username" id="trustly_username" autocomplete="off"
                                         value="<?php echo $trustly_username; ?>" placeholder="<?php echo $text_username ?>" />
+                                    <?php if(@$error['trustly_username']) { ?>
+                                        <div class="text-danger"><?php echo $error['trustly_username'] ?></div>
+                                    <?php } ?>
                                 </div>
                             </div>
 
@@ -59,6 +64,9 @@
                                 <div class="col-sm-10">
                                     <input class="form-control" type="password" name="trustly_password" id="trustly_password" autocomplete="off"
                                         value="<?php echo $trustly_password; ?>" placeholder="<?php echo $text_password ?>" />
+                                    <?php if(@$error['trustly_password']) { ?>
+                                        <div class="text-danger"><?php echo $error['trustly_password'] ?></div>
+                                    <?php } ?>
                                 </div>
                             </div>
 
@@ -67,10 +75,13 @@
                                 <div class="col-sm-10">
                                     <textarea class="form-control" rows=10" name="trustly_private_key" id="trustly_private_key" autocomplete="off"
                                         placeholder="<?php echo $text_private_key ?>"><?php echo $trustly_private_key; ?></textarea>
+                                    <?php if(@$error['trustly_private_key']) { ?>
+                                        <div class="text-danger"><?php echo $error['trustly_private_key'] ?></div>
+                                    <?php } ?>
                                 </div>
                             </div>
 
-            <?php if(version_compare(phpversion(), '5.2.0', '>=')): ?> 
+<?php if(version_compare(phpversion(), '5.2.0', '>=')): ?> 
                             <div class="form-group">
                                 <label class="col-sm-2 control-label" for="trustly_key_new"><?php echo $text_rsa_keys; ?></label>
                                 <div class="col-sm-10">
@@ -82,7 +93,7 @@
                                     </div>
                                 </div>
                             </div>
-            <?php endif; ?>
+<?php endif; ?>
 
                             <div class="form-group">
                                 <label class="col-sm-2 control-label" for="trustly_test_mode"><?php echo $text_test_mode; ?></label>
