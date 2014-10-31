@@ -1,5 +1,5 @@
 VERSION:=$$(head -n20 catalog/controller/payment/trustly.php | grep -w _module_version | cut -f2 -d\')
-PACKAGE=trustly-opencart
+PACKAGE=trustly-opencart2
 ROOT=$(PWD)
 FILES=$$(find admin/ catalog/ system/ trustly-notification.php -type f \! -name \*.git \! -name README.md \! -name LICENCE)
 DESTDIR?=$(HOME)/opencart-1.5.6.4/upload
