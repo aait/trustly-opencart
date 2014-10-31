@@ -362,7 +362,7 @@ class ControllerPaymentTrustly extends Controller
         $this->model_setting_setting->editSetting($this->_module_name, $data);
 
         $this->session->data['success'] = $this->language->get('text_success');
-        $this->redirect($this->url->link('extension/payment', 'token=' . $this->session->data['token'], 'SSL'));
+        $this->response->redirect($this->url->link('extension/payment', 'token=' . $this->session->data['token'], 'SSL'));
     }
 
     /**
