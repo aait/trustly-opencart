@@ -93,7 +93,7 @@
 				<label for="trustly_test_mode"><?php echo $text_test_mode; ?></label>
 			</td>
 			<td>
-				<input type="checkbox" name="trustly_test_mode" id="trustly_test_mode" <?php echo $trustly_private_key ? 'checked' : '' ?> value="1">
+				<input type="checkbox" name="trustly_test_mode" id="trustly_test_mode" <?php echo $trustly_test_mode ? 'checked' : '' ?> value="1">
 			</td>
 		</tr>
 		<tr>
