@@ -37,7 +37,9 @@ class ControllerPaymentTrustly extends Controller
         'text_backoffice_info',
         'text_backoffice_link_live',
         'text_backoffice_link_test',
-        'text_orders',
+		'text_orders',
+		'text_edit',
+		'help_total',
         'text_username',
         'text_password',
         'text_private_key',
@@ -86,26 +88,26 @@ class ControllerPaymentTrustly extends Controller
 
         // Load texts
         foreach ($this->_texts as $text) {
-            $this->data[$text] = $this->language->get($text);
+            $data[$text] = $this->language->get($text);
         }
 
         // Load options
         foreach ($this->_options as $option) {
             if (isset($this->request->post[$option])) {
-                $this->data[$option] = $this->request->post[$option];
+                $data[$option] = $this->request->post[$option];
             } else {
-                $this->data[$option] = $this->config->get($option);
+                $data[$option] = $this->config->get($option);
             }
         }
 
         // Load config
         $this->load->model('localisation/order_status');
-        $this->data['order_statuses'] = $this->model_localisation_order_status->getOrderStatuses();
+        $data['order_statuses'] = $this->model_localisation_order_status->getOrderStatuses();
         $this->load->model('localisation/geo_zone');
-        $this->data['geo_zones'] = $this->model_localisation_geo_zone->getGeoZones();
+        $data['geo_zones'] = $this->model_localisation_geo_zone->getGeoZones();
 
-        $this->data['action'] = $this->url->link('payment/' . $this->_module_name, 'token=' . $this->session->data['token'], 'SSL');
-        $this->data['cancel'] = $this->url->link('extension/payment', 'token=' . $this->session->data['token'], 'SSL');
+        $data['action'] = $this->url->link('payment/' . $this->_module_name, 'token=' . $this->session->data['token'], 'SSL');
+        $data['cancel'] = $this->url->link('extension/payment', 'token=' . $this->session->data['token'], 'SSL');
 
         if (($this->request->server['REQUEST_METHOD'] === 'POST')) {
             if (isset($this->request->post['action'])) {
@@ -144,15 +146,15 @@ class ControllerPaymentTrustly extends Controller
 
                     // Set Order Status
                     $this->model_sale_order->addOrderHistory($order_id, array(
-                        'order_status_id' => $this->data['trustly_refunded_status_id'],
+                        'order_status_id' => $data['trustly_refunded_status_id'],
                         'notify' => false,
-                        'comment' => sprintf($this->data['text_refund_performed'], $amount, $currency, date('Y-m-d H:i:s'))
+                        'comment' => sprintf($data['text_refund_performed'], $amount, $currency, date('Y-m-d H:i:s'))
                     ));
 
                     $json = array(
                         'status' => 'ok',
                         'message' => 'Order successfully refunded.',
-                        'label' => $this->data['text_refunded']
+                        'label' => $data['text_refunded']
                     );
                     $this->response->setOutput(json_encode($json));
                     return;
@@ -200,21 +202,21 @@ class ControllerPaymentTrustly extends Controller
         }
 
         // Errors
-        $this->data['error'] = $this->error;
+        $data['error'] = $this->error;
 
         // Breadcrumbs
-        $this->data['breadcrumbs'] = array();
-        $this->data['breadcrumbs'][] = array(
+        $data['breadcrumbs'] = array();
+        $data['breadcrumbs'][] = array(
             'text' => $this->language->get('text_home'),
             'href' => $this->url->link('common/home', 'token=' . $this->session->data['token'], 'SSL'),
             'separator' => false
         );
-        $this->data['breadcrumbs'][] = array(
+        $data['breadcrumbs'][] = array(
             'text' => $this->language->get('text_payment'),
             'href' => $this->url->link('extension/payment', 'token=' . $this->session->data['token'], 'SSL'),
             'separator' => ' :: '
         );
-        $this->data['breadcrumbs'][] = array(
+        $data['breadcrumbs'][] = array(
             'text' => $this->language->get('heading_title'),
             'href' => $this->url->link('payment/' . $this->_module_name, 'token=' . $this->session->data['token'], 'SSL'),
             'separator' => ' :: '
@@ -244,32 +246,29 @@ class ControllerPaymentTrustly extends Controller
 				$order_info['total'] = $this->currency->format($order_info['total'], $order_info['currency_code'], $order_info['currency_value'], false);
 			}
 
-			$this->data['orders'] = $orders->rows;
+			$data['orders'] = $orders->rows;
 
 			// Get Total
-			$total = $this->db->query('SELECT FOUND_ROWS() as total;');
+			$total = $this->db->query('SELECT FOUND_ROWS() as total;')->row;
 		} else {
 			$total = 0;
-			$this->data['orders'] = array();
+			$data['orders'] = array();
 		}
 
         // Pagination
         $pagination = new Pagination();
-        $pagination->total = (int)$total->row;
+        $pagination->total = $total;
         $pagination->page = $page;
         $pagination->limit = $limit;
         $pagination->text = $this->language->get('text_pagination');
         $pagination->url = $this->url->link('payment/trustly', 'token=' . $this->session->data['token'] . '&page={page}', 'SSL');
-        $this->data['pagination'] = $pagination->render();
+        $data['pagination'] = $pagination->render();
 
-        $this->template = 'payment/trustly.tpl';
+		$data['header'] = $this->load->controller('common/header');
+		$data['column_left'] = $this->load->controller('common/column_left');
+		$data['footer'] = $this->load->controller('common/footer');
 
-        $this->children = array(
-            'common/header',
-            'common/footer',
-        );
-
-        $this->response->setOutput($this->render());
+        $this->response->setOutput($this->load->view('payment/trustly.tpl', $data));
     }
 
     /**
