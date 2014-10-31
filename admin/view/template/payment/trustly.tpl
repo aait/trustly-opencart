@@ -338,6 +338,10 @@
 				'action': 'trustly_generate_rsa_key'
 			};
 		} else {
+			if($('#trustly_private_key').val() == '') {
+				return false;
+			}
+
 			data = {
 				'action': 'trustly_generate_rsa_public_key',
 				'private_key': $('#trustly_private_key').val()
