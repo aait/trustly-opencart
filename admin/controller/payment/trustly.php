@@ -224,6 +224,9 @@ class ControllerPaymentTrustly extends Controller
         $page = isset($this->request->get['page']) ? (int)$this->request->get['page'] : 1;
         $limit = (int)$this->config->get('config_admin_limit');
 
+        $total = NULL;
+        $data['orders'] = array();
+
         // We build tables etc upon save, so if we have saved data this will be safe to do.
         if($this->config->get('trustly_username')) {
             // Get Trustly Orders
@@ -247,15 +250,15 @@ class ControllerPaymentTrustly extends Controller
             $this->data['orders'] = $orders->rows;
 
             // Get Total
-            $total = $this->db->query('SELECT FOUND_ROWS() as total;');
-        } else {
+            $total = (int)$this->db->query('SELECT FOUND_ROWS() as total;')->row['total'];
+        }
+        if(!isset($total)) {
             $total = 0;
-            $this->data['orders'] = array();
         }
 
         // Pagination
         $pagination = new Pagination();
-        $pagination->total = (int)$total->row;
+        $pagination->total = $total;
         $pagination->page = $page;
         $pagination->limit = $limit;
         $pagination->text = $this->language->get('text_pagination');
