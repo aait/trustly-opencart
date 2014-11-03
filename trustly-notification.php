@@ -24,9 +24,12 @@ curl_setopt($ch, CURLOPT_POST, 1);
 curl_setopt($ch, CURLOPT_SAFE_UPLOAD, true);
 curl_setopt($ch, CURLOPT_POSTFIELDS, $http_raw_post_data);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
 $result = curl_exec($ch);
+if($result === false) {
+	$result = curl_error($ch);
+}
 curl_close($ch);
 
 echo $result;
