@@ -22,7 +22,7 @@ class ControllerPaymentTrustly extends Controller
         $order_id = $this->session->data['order_id'];
         if (empty($order_id)) {
             $this->session->data['error'] = $this->language->get('error_invalid_order');
-            $this->redirect($this->url->link('payment/' . $this->_module_name . '/error', '', 'SSL'));
+            $this->response->redirect($this->url->link('payment/' . $this->_module_name . '/error', '', 'SSL'));
         }
 
         $data = array();
@@ -92,7 +92,7 @@ class ControllerPaymentTrustly extends Controller
         $order_id = @$this->session->data['order_id'];
         if (empty($order_id)) {
             $this->session->data['error'] = $this->language->get('error_invalid_order');
-            $this->redirect($this->url->link('payment/' . $this->_module_name . '/error', '', 'SSL'));
+            $this->response->redirect($this->url->link('payment/' . $this->_module_name . '/error', '', 'SSL'));
         }
 
         // Waiting to receive notifications
@@ -119,7 +119,7 @@ class ControllerPaymentTrustly extends Controller
             $this->model_payment_trustly->setOrderStatus($order_id, $this->config->get('trustly_pending_status_id'), $this->language->get('text_message_payment_pending_notification'), true);
         }
 
-        $this->redirect($this->url->link('payment/' . $this->_module_name . '/success', '', 'SSL'));
+        $this->response->redirect($this->url->link('payment/' . $this->_module_name . '/success', '', 'SSL'));
     }
 
     /**
@@ -134,7 +134,7 @@ class ControllerPaymentTrustly extends Controller
         $trustly_order_id = $this->model_payment_trustly->getTrustlyOrderId(@$this->session->data['order_id']);
         if (!$trustly_order_id) {
             $this->session->data['error'] = $this->language->get('error_invalid_order');
-            $this->redirect($this->url->link('payment/' . $this->_module_name . '/error', '', 'SSL'));
+            $this->response->redirect($this->url->link('payment/' . $this->_module_name . '/error', '', 'SSL'));
         }
 
         if (isset($this->session->data['order_id'])) {
@@ -249,7 +249,7 @@ class ControllerPaymentTrustly extends Controller
         $order_id = $this->session->data['order_id'];
         if (empty($order_id)) {
             $this->session->data['error'] = $this->language->get('error_invalid_order');
-            $this->redirect($this->url->link('payment/' . $this->_module_name . '/error', '', 'SSL'));
+            $this->response->redirect($this->url->link('payment/' . $this->_module_name . '/error', '', 'SSL'));
         }
 
         $order = $this->model_checkout_order->getOrder($order_id);
@@ -257,7 +257,7 @@ class ControllerPaymentTrustly extends Controller
             $this->model_checkout_order->confirm($order_id, $this->config->get('trustly_failed_status_id'), $this->language->get('error_payment_failed'), false);
         }
 
-        $this->redirect($this->url->link('checkout/cart', '', 'SSL'));
+        $this->response->redirect($this->url->link('checkout/cart', '', 'SSL'));
     }
 
     /**
