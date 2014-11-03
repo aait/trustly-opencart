@@ -177,7 +177,7 @@ class ControllerPaymentTrustly extends Controller
 
         $this->document->setTitle($this->language->get('heading_title'));
 
-		$data = array();
+        $data = array();
         $data['breadcrumbs'] = array();
 
         $data['breadcrumbs'][] = array(
@@ -251,9 +251,9 @@ class ControllerPaymentTrustly extends Controller
         $data['header'] = $this->load->controller('common/header');
 
         if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/common/success.tpl')) {
-            return $this->load->view($this->config->get('config_template') . '/template/common/success.tpl', $data);
+            $this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/common/success.tpl', $data));
         } else {
-            return $this->load->view($this->template = 'default/template/common/success.tpl', $data);
+            $this->response->setOutput($this->load->view('default/template/common/success.tpl', $data));
         }
     }
 
@@ -309,9 +309,9 @@ class ControllerPaymentTrustly extends Controller
         unset($this->session->data['error']);
 
         if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/trustly_error.tpl')) {
-            return $this->load->view($this->config->get('config_template') . '/template/payment/trustly_error.tpl'. $data);
+            $this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/payment/trustly_error.tpl', $data));
         } else {
-            return $this->load->view('default/template/payment/trustly_error.tpl', $data);
+            $this->response->setOutput($this->load->view('default/template/payment/trustly_error.tpl', $data));
         }
     }
 
