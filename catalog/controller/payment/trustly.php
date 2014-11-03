@@ -13,7 +13,7 @@ class ControllerPaymentTrustly extends Controller
     /**
      * Index Action
      */
-    protected function index()
+    public function index()
     {
         $this->language->load('payment/trustly');
         $this->load->model('payment/trustly');
