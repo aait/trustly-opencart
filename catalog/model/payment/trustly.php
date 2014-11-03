@@ -341,59 +341,66 @@ class ModelPaymentTrustly extends Model
 
         $subject = sprintf($language->get('text_new_subject'), $order_info['store_name'], $order_id);
 
-        // HTML Mail
-        $template = new Template();
+		// HTML Mail
+		$data = array();
 
-        $template->data['title'] = sprintf($language->get('text_new_subject'), html_entity_decode($order_info['store_name'], ENT_QUOTES, 'UTF-8'), $order_id);
+        $data['title'] = sprintf($language->get('text_new_subject'), html_entity_decode($order_info['store_name'], ENT_QUOTES, 'UTF-8'), $order_id);
 
-        $template->data['text_greeting'] = sprintf($language->get('text_new_greeting'), html_entity_decode($order_info['store_name'], ENT_QUOTES, 'UTF-8'));
-        $template->data['text_link'] = $language->get('text_new_link');
-        $template->data['text_download'] = $language->get('text_new_download');
-        $template->data['text_order_detail'] = $language->get('text_new_order_detail');
-        $template->data['text_instruction'] = $language->get('text_new_instruction');
-        $template->data['text_order_id'] = $language->get('text_new_order_id');
-        $template->data['text_date_added'] = $language->get('text_new_date_added');
-        $template->data['text_payment_method'] = $language->get('text_new_payment_method');
-        $template->data['text_shipping_method'] = $language->get('text_new_shipping_method');
-        $template->data['text_email'] = $language->get('text_new_email');
-        $template->data['text_telephone'] = $language->get('text_new_telephone');
-        $template->data['text_ip'] = $language->get('text_new_ip');
-        $template->data['text_payment_address'] = $language->get('text_new_payment_address');
-        $template->data['text_shipping_address'] = $language->get('text_new_shipping_address');
-        $template->data['text_product'] = $language->get('text_new_product');
-        $template->data['text_model'] = $language->get('text_new_model');
-        $template->data['text_quantity'] = $language->get('text_new_quantity');
-        $template->data['text_price'] = $language->get('text_new_price');
-        $template->data['text_total'] = $language->get('text_new_total');
-        $template->data['text_footer'] = $language->get('text_new_footer');
-        $template->data['text_powered'] = $language->get('text_new_powered');
-        $template->data['text_new_order_status'] = $language->get('text_new_order_status');
+        $data['text_greeting'] = sprintf($language->get('text_new_greeting'), html_entity_decode($order_info['store_name'], ENT_QUOTES, 'UTF-8'));
+        $data['text_link'] = $language->get('text_new_link');
+        $data['text_download'] = $language->get('text_new_download');
+        $data['text_order_detail'] = $language->get('text_new_order_detail');
+        $data['text_instruction'] = $language->get('text_new_instruction');
+        $data['text_order_id'] = $language->get('text_new_order_id');
+        $data['text_date_added'] = $language->get('text_new_date_added');
+        $data['text_payment_method'] = $language->get('text_new_payment_method');
+        $data['text_shipping_method'] = $language->get('text_new_shipping_method');
+        $data['text_email'] = $language->get('text_new_email');
+        $data['text_telephone'] = $language->get('text_new_telephone');
+        $data['text_ip'] = $language->get('text_new_ip');
+        $data['text_payment_address'] = $language->get('text_new_payment_address');
+        $data['text_shipping_address'] = $language->get('text_new_shipping_address');
+        $data['text_product'] = $language->get('text_new_product');
+        $data['text_model'] = $language->get('text_new_model');
+        $data['text_quantity'] = $language->get('text_new_quantity');
+        $data['text_price'] = $language->get('text_new_price');
+        $data['text_total'] = $language->get('text_new_total');
+        $data['text_footer'] = $language->get('text_new_footer');
+        $data['text_powered'] = $language->get('text_new_powered');
+        $data['text_new_order_status'] = $language->get('text_new_order_status');
 
-        $template->data['logo'] = $this->config->get('config_url') . 'image/' . $this->config->get('config_logo');
-        $template->data['store_name'] = $order_info['store_name'];
-        $template->data['store_url'] = $order_info['store_url'];
-        $template->data['customer_id'] = $order_info['customer_id'];
-        $template->data['link'] = $order_info['store_url'] . 'index.php?route=account/order/info&order_id=' . $order_id;
+        $data['logo'] = $this->config->get('config_url') . 'image/' . $this->config->get('config_logo');
+        $data['store_name'] = $order_info['store_name'];
+        $data['store_url'] = $order_info['store_url'];
+        $data['customer_id'] = $order_info['customer_id'];
+        $data['link'] = $order_info['store_url'] . 'index.php?route=account/order/info&order_id=' . $order_id;
 
         // Order Status
-        $template->data['order_status'] = $order_status;
+        $data['order_status'] = $order_status;
 
         // Downloads
-        $order_download_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_download WHERE order_id = '" . (int)$order_id . "'");
-        if ($order_download_query->num_rows) {
-            $template->data['download'] = $order_info['store_url'] . 'index.php?route=account/download';
+		$order_download_query = $this->db->query(
+			"SELECT COUNT(download_id) AS count
+			FROM `" . DB_PREFIX . "order` o
+			INNER JOIN " . DB_PREFIX . "order_product op ON (o.order_id = op.order_id)
+			INNER JOIN " . DB_PREFIX . "product_to_download p2d ON (op.product_id = p2d.product_id)
+			WHERE o.order_id = " . (int)$order_id);
+
+        $this->addLog(var_export($order_download_query->rows, true));
+        if ($order_download_query->rows[0]['count']) {
+            $data['download'] = $order_info['store_url'] . 'index.php?route=account/download';
         } else {
-            $template->data['download'] = '';
+            $data['download'] = '';
         }
 
-        $template->data['order_id'] = $order_id;
-        $template->data['date_added'] = date($language->get('date_format_short'), strtotime($order_info['date_added']));
-        $template->data['payment_method'] = $order_info['payment_method'];
-        $template->data['shipping_method'] = $order_info['shipping_method'];
-        $template->data['email'] = $order_info['email'];
-        $template->data['telephone'] = $order_info['telephone'];
-        $template->data['ip'] = $order_info['ip'];
-        $template->data['comment'] = !empty($comment) ? nl2br($comment) : '';
+        $data['order_id'] = $order_id;
+        $data['date_added'] = date($language->get('date_format_short'), strtotime($order_info['date_added']));
+        $data['payment_method'] = $order_info['payment_method'];
+        $data['shipping_method'] = $order_info['shipping_method'];
+        $data['email'] = $order_info['email'];
+        $data['telephone'] = $order_info['telephone'];
+        $data['ip'] = $order_info['ip'];
+        $data['comment'] = !empty($comment) ? nl2br($comment) : '';
 
         if ($order_info['payment_address_format']) {
             $format = $order_info['payment_address_format'];
@@ -427,7 +434,7 @@ class ModelPaymentTrustly extends Model
             'country' => $order_info['payment_country']
         );
 
-        $template->data['payment_address'] = str_replace(array("\r\n", "\r", "\n"), '<br />', preg_replace(array("/\s\s+/", "/\r\r+/", "/\n\n+/"), '<br />', trim(str_replace($find, $replace, $format))));
+        $data['payment_address'] = str_replace(array("\r\n", "\r", "\n"), '<br />', preg_replace(array("/\s\s+/", "/\r\r+/", "/\n\n+/"), '<br />', trim(str_replace($find, $replace, $format))));
 
         if ($order_info['shipping_address_format']) {
             $format = $order_info['shipping_address_format'];
@@ -461,10 +468,10 @@ class ModelPaymentTrustly extends Model
             'country' => $order_info['shipping_country']
         );
 
-        $template->data['shipping_address'] = str_replace(array("\r\n", "\r", "\n"), '<br />', preg_replace(array("/\s\s+/", "/\r\r+/", "/\n\n+/"), '<br />', trim(str_replace($find, $replace, $format))));
+        $data['shipping_address'] = str_replace(array("\r\n", "\r", "\n"), '<br />', preg_replace(array("/\s\s+/", "/\r\r+/", "/\n\n+/"), '<br />', trim(str_replace($find, $replace, $format))));
 
         // Products
-        $template->data['products'] = array();
+        $data['products'] = array();
 
         foreach ($order_product_query->rows as $product) {
             $option_data = array();
@@ -484,7 +491,7 @@ class ModelPaymentTrustly extends Model
                 );
             }
 
-            $template->data['products'][] = array(
+            $data['products'][] = array(
                 'name' => $product['name'],
                 'model' => $product['model'],
                 'option' => $option_data,
@@ -495,11 +502,11 @@ class ModelPaymentTrustly extends Model
         }
 
         // Vouchers
-        $template->data['vouchers'] = array();
+        $data['vouchers'] = array();
 
         $order_voucher_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_voucher WHERE order_id = '" . (int)$order_id . "'");
         foreach ($order_voucher_query->rows as $voucher) {
-            $template->data['vouchers'][] = array(
+            $data['vouchers'][] = array(
                 'description' => $voucher['description'],
                 'amount' => $this->currency->format($voucher['amount'], $order_info['currency_code'], $order_info['currency_value']),
             );
@@ -507,12 +514,12 @@ class ModelPaymentTrustly extends Model
 
         // Order Totals
         $order_total_query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order_total` WHERE order_id = '" . (int)$order_id . "' ORDER BY sort_order ASC");
-        $template->data['totals'] = $order_total_query->rows;
+        $data['totals'] = $order_total_query->rows;
 
         if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/mail/trustly_order.tpl')) {
-            $html = $template->fetch($this->config->get('config_template') . '/template/mail/trustly_order.tpl');
+            $html = $this->load->view($this->config->get('config_template') . '/template/mail/trustly_order.tpl', $data);
         } else {
-            $html = $template->fetch('default/template/mail/trustly_order.tpl');
+            $html = $this->load->view('default/template/mail/trustly_order.tpl', $data);
         }
 
         $mail = new Mail();
