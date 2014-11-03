@@ -25,6 +25,7 @@ class ControllerPaymentTrustly extends Controller
             $this->redirect($this->url->link('payment/' . $this->_module_name . '/error', '', 'SSL'));
         }
 
+        $data = array();
         // Get Trustly Payment URL
         $trustly_order = $this->model_payment_trustly->getTrustlyOrder($order_id);
         if (!$trustly_order) {
@@ -53,22 +54,23 @@ class ControllerPaymentTrustly extends Controller
                 }
 
                 // Show Error
-                echo '<div class="warning">' . sprintf($this->language->get('error_trustly'), htmlspecialchars($error)) . '</div>';
-                return;
+                $data['warning'] = sprintf($this->language->get('error_trustly'), htmlspecialchars($error));
             }
         }
 
-        // Check Payment URL
-        if (empty($trustly_order['url'])) {
-            $this->model_payment_trustly->removeTrustlyOrder($trustly_order['trustly_order_id']);
-            throw new Exception($this->language->get('error_no_payment_url'));
-        }
+        if(!isset($data['warning'])) {
 
-		$data = array();
-        $data['text_title'] = $this->language->get('text_title');
-        $data['action'] = '';
-        $data['trustly_iframe_url'] = $trustly_order['url'];
-        $data['trustly_order_id'] = $trustly_order['trustly_order_id'];
+            // Check Payment URL
+            if (empty($trustly_order['url'])) {
+                $this->model_payment_trustly->removeTrustlyOrder($trustly_order['trustly_order_id']);
+                throw new Exception($this->language->get('error_no_payment_url'));
+            }
+
+            $data['text_title'] = $this->language->get('text_title');
+            $data['action'] = '';
+            $data['trustly_iframe_url'] = $trustly_order['url'];
+            $data['trustly_order_id'] = $trustly_order['trustly_order_id'];
+        }
 
         if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/trustly.tpl')) {
             return $this->load->view($this->config->get('config_template') . '/template/payment/trustly.tpl', $data);
