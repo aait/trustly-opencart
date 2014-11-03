@@ -64,18 +64,17 @@ class ControllerPaymentTrustly extends Controller
             throw new Exception($this->language->get('error_no_payment_url'));
         }
 
-        $this->data['text_title'] = $this->language->get('text_title');
-        $this->data['action'] = '';
-        $this->data['trustly_iframe_url'] = $trustly_order['url'];
-        $this->data['trustly_order_id'] = $trustly_order['trustly_order_id'];
+		$data = array();
+        $data['text_title'] = $this->language->get('text_title');
+        $data['action'] = '';
+        $data['trustly_iframe_url'] = $trustly_order['url'];
+        $data['trustly_order_id'] = $trustly_order['trustly_order_id'];
 
         if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/trustly.tpl')) {
-            $this->template = $this->config->get('config_template') . '/template/payment/trustly.tpl';
+            return $this->load->view($this->config->get('config_template') . '/template/payment/trustly.tpl', $data);
         } else {
-            $this->template = 'default/template/payment/trustly.tpl';
+            return $this->load->view('default/template/payment/trustly.tpl', $data);
         }
-
-        $this->render();
     }
 
     /**
@@ -157,33 +156,34 @@ class ControllerPaymentTrustly extends Controller
 
         $this->document->setTitle($this->language->get('heading_title'));
 
-        $this->data['breadcrumbs'] = array();
+		$data = array();
+        $data['breadcrumbs'] = array();
 
-        $this->data['breadcrumbs'][] = array(
+        $data['breadcrumbs'][] = array(
             'href'      => $this->url->link('common/home'),
             'text'      => $this->language->get('text_home'),
             'separator' => false
         );
 
-        $this->data['breadcrumbs'][] = array(
+        $data['breadcrumbs'][] = array(
             'href'      => $this->url->link('checkout/cart'),
             'text'      => $this->language->get('text_basket'),
             'separator' => $this->language->get('text_separator')
         );
 
-        $this->data['breadcrumbs'][] = array(
+        $data['breadcrumbs'][] = array(
             'href'      => $this->url->link('checkout/checkout', '', 'SSL'),
             'text'      => $this->language->get('text_checkout'),
             'separator' => $this->language->get('text_separator')
         );
 
-        $this->data['breadcrumbs'][] = array(
+        $data['breadcrumbs'][] = array(
             'href'      => $this->url->link('checkout/success'),
             'text'      => $this->language->get('text_success'),
             'separator' => $this->language->get('text_separator')
         );
 
-        $this->data['heading_title'] = $this->language->get('heading_title');
+        $data['heading_title'] = $this->language->get('heading_title');
 
 
         // Analyze notifications
@@ -213,31 +213,27 @@ class ControllerPaymentTrustly extends Controller
         }
 
         if ($this->customer->isLogged()) {
-            $this->data['text_message'] = $message . sprintf($this->language->get('text_success_customer'), $this->url->link('account/account', '', 'SSL'), $this->url->link('account/order', '', 'SSL'), $this->url->link('account/download', '', 'SSL'), $this->url->link('information/contact'));
+            $data['text_message'] = $message . sprintf($this->language->get('text_success_customer'), $this->url->link('account/account', '', 'SSL'), $this->url->link('account/order', '', 'SSL'), $this->url->link('account/download', '', 'SSL'), $this->url->link('information/contact'));
         } else {
-            $this->data['text_message'] = $message . sprintf($this->language->get('text_success_guest'), $this->url->link('information/contact'));
+            $data['text_message'] = $message . sprintf($this->language->get('text_success_guest'), $this->url->link('information/contact'));
         }
 
-        $this->data['button_continue'] = $this->language->get('button_continue');
+        $data['button_continue'] = $this->language->get('button_continue');
 
-        $this->data['continue'] = $this->url->link('common/home');
+		$data['continue'] = $this->url->link('common/home');
+
+		$data['column_left'] = $this->load->controller('common/column_left');
+		$data['column_right'] = $this->load->controller('common/column_right');
+		$data['content_top'] = $this->load->controller('common/content_top');
+		$data['content_bottom'] = $this->load->controller('common/content_bottom');
+		$data['footer'] = $this->load->controller('common/footer');
+		$data['header'] = $this->load->controller('common/header');
 
         if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/common/success.tpl')) {
-            $this->template = $this->config->get('config_template') . '/template/common/success.tpl';
+            return $this->load->view($this->config->get('config_template') . '/template/common/success.tpl', $data);
         } else {
-            $this->template = 'default/template/common/success.tpl';
+            return $this->load->view($this->template = 'default/template/common/success.tpl', $data);
         }
-
-        $this->children = array(
-            'common/column_left',
-            'common/column_right',
-            'common/content_top',
-            'common/content_bottom',
-            'common/footer',
-            'common/header'
-        );
-
-        $this->response->setOutput($this->render());
     }
 
     /**
@@ -267,37 +263,35 @@ class ControllerPaymentTrustly extends Controller
      */
     public function error()
     {
-        $this->language->load('payment/trustly');
+		$this->language->load('payment/trustly');
 
-        $this->data['heading_title'] = $this->language->get('text_error_title');
+		$data = array();
+
+        $data['heading_title'] = $this->language->get('text_error_title');
         if (!empty($this->session->data['error'])) {
-            $this->data['description'] = $this->session->data['error'];
+            $data['description'] = $this->session->data['error'];
         } else {
-            $this->data['description'] = $this->language->get('text_error_description');
+            $data['description'] = $this->language->get('text_error_description');
         }
 
-        $this->data['link_text'] = $this->language->get('text_error_link');
-        $this->data['link'] = $this->url->link('checkout/checkout', '', 'SSL');
+        $data['link_text'] = $this->language->get('text_error_link');
+        $data['link'] = $this->url->link('checkout/checkout', '', 'SSL');
 
-        if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/trustly_error.tpl')) {
-            $this->template = $this->config->get('config_template') . '/template/payment/trustly_error.tpl';
-        } else {
-            $this->template = 'default/template/payment/trustly_error.tpl';
-        }
-
-        $this->children = array(
-            'common/column_left',
-            'common/column_right',
-            'common/content_top',
-            'common/content_bottom',
-            'common/footer',
-            'common/header'
-        );
+		$data['column_left'] = $this->load->controller('common/column_left');
+		$data['column_right'] = $this->load->controller('common/column_right');
+		$data['content_top'] = $this->load->controller('common/content_top');
+		$data['content_bottom'] = $this->load->controller('common/content_bottom');
+		$data['footer'] = $this->load->controller('common/footer');
+		$data['header'] = $this->load->controller('common/header');
 
         // Unset Error message
-        unset($this->session->data['error']);
+		unset($this->session->data['error']);
 
-        $this->response->setOutput($this->render());
+        if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/trustly_error.tpl')) {
+            return $this->load->view($this->config->get('config_template') . '/template/payment/trustly_error.tpl'. $data);
+        } else {
+            return $this->load->view('default/template/payment/trustly_error.tpl', $data);
+        }
     }
 
     /**
