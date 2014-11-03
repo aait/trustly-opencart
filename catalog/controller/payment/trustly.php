@@ -273,7 +273,10 @@ class ControllerPaymentTrustly extends Controller
 
         $order = $this->model_checkout_order->getOrder($order_id);
         if ($order) {
-            $this->model_checkout_order->confirm($order_id, $this->config->get('trustly_failed_status_id'), $this->language->get('error_payment_failed'), false);
+            $this->model_checkout_order->addOrderHistory($order_id,
+                $this->config->get('trustly_failed_status_id'),
+                $this->language->get('error_payment_failed'),
+                false);
         }
 
         $this->response->redirect($this->url->link('checkout/cart', '', 'SSL'));
@@ -326,8 +329,9 @@ class ControllerPaymentTrustly extends Controller
         $this->load->model('checkout/order');
 
         // Get Raw Post Data
-        global $HTTP_RAW_POST_DATA;
-        $http_raw_post_data = $HTTP_RAW_POST_DATA;
+        if(isset($HTTP_RAW_POST_DATA)) {
+            $http_raw_post_data = $HTTP_RAW_POST_DATA;
+        }
         if (empty($http_raw_post_data)) {
             $http_raw_post_data = file_get_contents('php://input');
         }
@@ -387,6 +391,7 @@ class ControllerPaymentTrustly extends Controller
                 // Show Notification Response
                 $response = $this->getAPI()->notificationResponse($notification, true);
                 $response_json = $response->json();
+                $this->model_payment_trustly->addLog('Reusing previous response for notification ' . $trustly_notification_id . ' for trustly order ' . $trustly_order_id);
                 exit($response_json);
             }
 
@@ -470,7 +475,11 @@ class ControllerPaymentTrustly extends Controller
 
                     // Confirm Order
                     $this->db->query("UPDATE `" . DB_PREFIX . "order` SET order_status_id = '0', date_modified = NOW() WHERE order_id = '" . (int)$order_id . "'");
-                    $this->model_checkout_order->confirm($order_id, $this->config->get('trustly_completed_status_id'), $notification_message, true);
+                    $this->model_checkout_order->addOrderHistory($order_id,
+                        $this->config->get('trustly_completed_status_id'),
+                        $notification_message,
+                        true);
+
                     $this->db->query("UPDATE `" . DB_PREFIX . "order` SET order_status_id = '" . (int)$this->config->get('trustly_completed_status_id') . "', date_modified = NOW() WHERE order_id = '" . (int)$order_id . "'");
                     $this->model_payment_trustly->addLog('Updated order status to ' . $this->config->get('trustly_completed_status_id') . ' for order #' . $order_id);
                 }
