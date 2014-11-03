@@ -26,7 +26,17 @@ class ControllerPaymentTrustly extends Controller
         'trustly_geo_zone_id',
         'trustly_status',
         'trustly_sort_order',
-    );
+	);
+
+	protected $_defaults = array(
+        'trustly_test_mode' => false,
+        'trustly_notify_http' => false,
+        'trustly_completed_status_id' => 15,
+        'trustly_pending_status_id' => 1,
+        'trustly_canceled_status_id' => 7,
+        'trustly_failed_status_id' => 10,
+        'trustly_refunded_status_id' => 11,
+	);
 
     protected $_texts = array(
         'button_save',
@@ -96,7 +106,11 @@ class ControllerPaymentTrustly extends Controller
             if (isset($this->request->post[$option])) {
                 $data[$option] = $this->request->post[$option];
             } else {
-                $data[$option] = $this->config->get($option);
+				$data[$option] = $this->config->get($option);
+
+				if(!isset($data[$option]) && isset($this->_defaults[$option])) {
+					$data[$option] = $this->_defaults[$option];
+				}
             }
         }
 
