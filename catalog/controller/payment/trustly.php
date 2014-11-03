@@ -116,7 +116,10 @@ class ControllerPaymentTrustly extends Controller
 
         // Set Pending status
         if (!in_array('credit', $notification_methods) && !in_array('pending', $notification_methods)) {
-            $this->model_payment_trustly->setOrderStatus($order_id, $this->config->get('trustly_pending_status_id'), $this->language->get('text_message_payment_pending_notification'), true);
+            $this->model_checkout_order->addOrderHistory($order_id,
+                $this->config->get('trustly_pending_status_id'), 
+                $this->language->get('text_message_payment_pending_notification'),
+                true);
         }
 
         $this->response->redirect($this->url->link('payment/' . $this->_module_name . '/success', '', 'SSL'));
@@ -435,7 +438,11 @@ class ControllerPaymentTrustly extends Controller
                 );
 
                 // Set Order status
-                $this->model_payment_trustly->setOrderStatus($order_id, $this->config->get('trustly_pending_status_id'), $notification_message, true);
+                $this->model_checkout_order->addOrderHistory($order_id,
+                    $this->config->get('trustly_pending_status_id'),
+                    $notification_message,
+                    true);
+
                 $this->model_payment_trustly->addLog('Updated order status to ' . $this->config->get('trustly_pending_status_id') . ' for order #' . $order_id);
                 break;
             case 'credit':
@@ -456,7 +463,11 @@ class ControllerPaymentTrustly extends Controller
                     );
                     $notification_message .= "\n" . $this->language->get('error_wrong_payment_amount');
 
-                    $this->model_payment_trustly->setOrderStatus($order_id, $this->config->get('trustly_failed_status_id'), $notification_message, true);
+                    $this->model_checkout_order->addOrderHistory($order_id,
+                        $this->config->get('trustly_failed_status_id'),
+                        $notification_message,
+                        true);
+
                     $this->model_payment_trustly->addLog(sprintf('Incoming payment with wrong amount/currency, is %s %s, expected %s %s. Setting order status to %s for order #%s',
                         $payment_amount,
                         $payment_currency,
@@ -474,13 +485,11 @@ class ControllerPaymentTrustly extends Controller
                     );
 
                     // Confirm Order
-                    $this->db->query("UPDATE `" . DB_PREFIX . "order` SET order_status_id = '0', date_modified = NOW() WHERE order_id = '" . (int)$order_id . "'");
                     $this->model_checkout_order->addOrderHistory($order_id,
                         $this->config->get('trustly_completed_status_id'),
                         $notification_message,
                         true);
 
-                    $this->db->query("UPDATE `" . DB_PREFIX . "order` SET order_status_id = '" . (int)$this->config->get('trustly_completed_status_id') . "', date_modified = NOW() WHERE order_id = '" . (int)$order_id . "'");
                     $this->model_payment_trustly->addLog('Updated order status to ' . $this->config->get('trustly_completed_status_id') . ' for order #' . $order_id);
                 }
                 break;
@@ -497,7 +506,10 @@ class ControllerPaymentTrustly extends Controller
                 );
 
                 // Set Order status
-                $this->model_payment_trustly->setOrderStatus($order_id, $this->config->get('trustly_refunded_status_id'), $notification_message, true);
+                $this->model_checkout_order->addOrderHistory($order_id,
+                    $this->config->get('trustly_refunded_status_id'),
+                    $notification_message,
+                    true);
                 $this->model_payment_trustly->addLog('Updated order status to ' .  $this->config->get('trustly_refunded_status_id') . ' for order #' . $order_id);
                 break;
             case 'cancel':
@@ -511,7 +523,10 @@ class ControllerPaymentTrustly extends Controller
                 );
 
                 // Set Order status
-                $this->model_payment_trustly->setOrderStatus($order_id, $this->config->get('trustly_canceled_status_id'), $notification_message, true);
+                $this->model_checkout_order->addOrderHistory($order_id,
+                    $this->config->get('trustly_canceled_status_id'),
+                    $notification_message,
+                    true);
                 $this->model_payment_trustly->addLog('Updated order status to ' . $this->config->get('trustly_canceled_status_id') . ' for order #' . $order_id);
                 break;
             default:
