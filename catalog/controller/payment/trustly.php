@@ -222,14 +222,14 @@ class ControllerPaymentTrustly extends Controller
 
         $data['button_continue'] = $this->language->get('button_continue');
 
-		$data['continue'] = $this->url->link('common/home');
+        $data['continue'] = $this->url->link('common/home');
 
-		$data['column_left'] = $this->load->controller('common/column_left');
-		$data['column_right'] = $this->load->controller('common/column_right');
-		$data['content_top'] = $this->load->controller('common/content_top');
-		$data['content_bottom'] = $this->load->controller('common/content_bottom');
-		$data['footer'] = $this->load->controller('common/footer');
-		$data['header'] = $this->load->controller('common/header');
+        $data['column_left'] = $this->load->controller('common/column_left');
+        $data['column_right'] = $this->load->controller('common/column_right');
+        $data['content_top'] = $this->load->controller('common/content_top');
+        $data['content_bottom'] = $this->load->controller('common/content_bottom');
+        $data['footer'] = $this->load->controller('common/footer');
+        $data['header'] = $this->load->controller('common/header');
 
         if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/common/success.tpl')) {
             return $this->load->view($this->config->get('config_template') . '/template/common/success.tpl', $data);
@@ -265,9 +265,9 @@ class ControllerPaymentTrustly extends Controller
      */
     public function error()
     {
-		$this->language->load('payment/trustly');
+        $this->language->load('payment/trustly');
 
-		$data = array();
+        $data = array();
 
         $data['heading_title'] = $this->language->get('text_error_title');
         if (!empty($this->session->data['error'])) {
@@ -279,15 +279,15 @@ class ControllerPaymentTrustly extends Controller
         $data['link_text'] = $this->language->get('text_error_link');
         $data['link'] = $this->url->link('checkout/checkout', '', 'SSL');
 
-		$data['column_left'] = $this->load->controller('common/column_left');
-		$data['column_right'] = $this->load->controller('common/column_right');
-		$data['content_top'] = $this->load->controller('common/content_top');
-		$data['content_bottom'] = $this->load->controller('common/content_bottom');
-		$data['footer'] = $this->load->controller('common/footer');
-		$data['header'] = $this->load->controller('common/header');
+        $data['column_left'] = $this->load->controller('common/column_left');
+        $data['column_right'] = $this->load->controller('common/column_right');
+        $data['content_top'] = $this->load->controller('common/content_top');
+        $data['content_bottom'] = $this->load->controller('common/content_bottom');
+        $data['footer'] = $this->load->controller('common/footer');
+        $data['header'] = $this->load->controller('common/header');
 
         // Unset Error message
-		unset($this->session->data['error']);
+        unset($this->session->data['error']);
 
         if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/trustly_error.tpl')) {
             return $this->load->view($this->config->get('config_template') . '/template/payment/trustly_error.tpl'. $data);
