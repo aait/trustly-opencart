@@ -37,6 +37,7 @@ class ModelPaymentTrustly extends Model
             $method_data = array(
                 'code' => 'trustly',
                 'title' => $this->language->get('text_title'),
+                'terms' => '',
                 'sort_order' => $this->config->get('trustly_sort_order')
             );
         }
