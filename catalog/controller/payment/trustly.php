@@ -372,6 +372,7 @@ class ControllerPaymentTrustly extends Controller
                 $this->model_payment_trustly->unlockOrderAfterProcessing($order_id, $lock_id);
                 // Show Notification Response
                 $response = $this->getAPI()->notificationResponse($notification, true);
+                $this->model_payment_trustly->addLog('Reusing previous response for notification ' . $trustly_notification_id . ' for trustly order ' . $trustly_order_id);
                 $response_json = $response->json();
                 exit($response_json);
             }
