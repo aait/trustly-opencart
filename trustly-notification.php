@@ -9,7 +9,7 @@
 require_once dirname($_SERVER['SCRIPT_FILENAME']) . '/config.php';
 
 if(isset($HTTP_RAW_POST_DATA)) {
-	$http_raw_post_data = $HTTP_RAW_POST_DATA;
+    $http_raw_post_data = $HTTP_RAW_POST_DATA;
 }
 if (empty($http_raw_post_data)) {
     $http_raw_post_data = file_get_contents('php://input');
