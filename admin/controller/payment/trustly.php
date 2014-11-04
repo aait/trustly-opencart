@@ -239,7 +239,7 @@ class ControllerPaymentTrustly extends Controller
         $limit = (int)$this->config->get('config_admin_limit');
 
         $total = NULL;
-        $data['orders'] = array();
+        $this->data['orders'] = array();
 
         // We build tables etc upon save, so if we have saved data this will be safe to do.
         if($this->config->get('trustly_username')) {
