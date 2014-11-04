@@ -28,6 +28,16 @@ class ControllerPaymentTrustly extends Controller
         'trustly_sort_order',
     );
 
+	protected $_defaults = array(
+        'trustly_test_mode' => false,
+        'trustly_notify_http' => false,
+        'trustly_completed_status_id' => 15,
+        'trustly_pending_status_id' => 1,
+        'trustly_canceled_status_id' => 7,
+        'trustly_failed_status_id' => 10,
+        'trustly_refunded_status_id' => 11,
+	);
+
     protected $_texts = array(
         'button_save',
         'button_cancel',
@@ -95,6 +105,10 @@ class ControllerPaymentTrustly extends Controller
                 $this->data[$option] = $this->request->post[$option];
             } else {
                 $this->data[$option] = $this->config->get($option);
+
+                if(!isset($this->data[$option]) && isset($this->_defaults[$option])) {
+                    $this->data[$option] = $this->_defaults[$option];
+                }
             }
         }
 
