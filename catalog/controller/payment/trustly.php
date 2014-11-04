@@ -53,21 +53,22 @@ class ControllerPaymentTrustly extends Controller
                 }
 
                 // Show Error
-                echo '<div class="warning">' . sprintf($this->language->get('error_trustly'), htmlspecialchars($error)) . '</div>';
-                return;
+                $this->data['warning'] = sprintf($this->language->get('error_trustly'), htmlspecialchars($error));
             }
         }
 
-        // Check Payment URL
-        if (empty($trustly_order['url'])) {
-            $this->model_payment_trustly->removeTrustlyOrder($trustly_order['trustly_order_id']);
-            throw new Exception($this->language->get('error_no_payment_url'));
-        }
+        if(!isset($this->data['warning'])) {
+            // Check Payment URL
+            if (empty($trustly_order['url'])) {
+                $this->model_payment_trustly->removeTrustlyOrder($trustly_order['trustly_order_id']);
+                throw new Exception($this->language->get('error_no_payment_url'));
+            }
 
-        $this->data['text_title'] = $this->language->get('text_title');
-        $this->data['action'] = '';
-        $this->data['trustly_iframe_url'] = $trustly_order['url'];
-        $this->data['trustly_order_id'] = $trustly_order['trustly_order_id'];
+            $this->data['text_title'] = $this->language->get('text_title');
+            $this->data['action'] = '';
+            $this->data['trustly_iframe_url'] = $trustly_order['url'];
+            $this->data['trustly_order_id'] = $trustly_order['trustly_order_id'];
+        }
 
         if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/trustly.tpl')) {
             $this->template = $this->config->get('config_template') . '/template/payment/trustly.tpl';
