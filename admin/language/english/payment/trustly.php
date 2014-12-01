@@ -5,7 +5,7 @@ if (!defined('DIR_APPLICATION')) {
 
 $_['heading_title'] = 'Trustly';
 $_['text_payment'] = 'Payment';
-$_['text_trustly']   = '<a href="https://trustly.com/" target="_blank"><img src="view/image/payment/trustly.png" alt="Trustly" title="Trustly" style="border: 1px solid #eee;" /></a>';
+$_['text_trustly']   = '<a href="https://trustly.com/" target="_blank"><img src="https://static.trustly.com/logotype/footer/trustly_96.png" alt="Trustly" title="Trustly" style="border: 1px solid #eee;" /></a>';
 $_['text_success'] = 'Success: Trustly settings saved.';
 $_['text_settings'] = 'Settings';
 $_['text_backoffice_info'] = 'You can monitor your transactions and get support in the Trustly backoffice.';
