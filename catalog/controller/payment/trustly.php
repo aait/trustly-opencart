@@ -7,7 +7,7 @@ require_once DIR_SYSTEM . 'library/trustly-client-php/Trustly.php';
 class ControllerPaymentTrustly extends Controller
 {
     protected $_module_name = 'trustly';
-    protected $_module_version = '1.0.0';
+    protected $_module_version = '1.0.1';
     protected $api;
 
     /**
