@@ -23,7 +23,7 @@ if (isset($_SERVER['HTTPS']) && (($_SERVER['HTTPS'] === 'on') || ($_SERVER['HTTP
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, $post_url);
 curl_setopt($ch, CURLOPT_POST, 1);
-if(version_compare(phpversion(), '5.9.0', '>=')) {
+if(version_compare(phpversion(), '5.5.0', '>=')) {
     curl_setopt($ch, CURLOPT_SAFE_UPLOAD, true);
 } else {
     if(preg_match('/^@/', $http_raw_post_data)) {
